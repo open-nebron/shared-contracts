@@ -1,0 +1,11 @@
+{
+  "$id": "auth.user.registered",
+  "type": "object",
+  "required": ["userId", "email", "createdAt"],
+  "properties": {
+    "userId":   { "type": "string" },
+    "email":    { "type": "string", "format": "email" },
+    "createdAt":{ "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

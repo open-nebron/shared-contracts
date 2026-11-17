@@ -1,0 +1,12 @@
+{
+  "$id": "voice.call.ringing",
+  "type": "object",
+  "required": ["callId", "fromUserId", "toUserId", "startedAt"],
+  "properties": {
+    "callId":     { "type": "string" },
+    "fromUserId": { "type": "string" },
+    "toUserId":   { "type": "string" },
+    "startedAt":  { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

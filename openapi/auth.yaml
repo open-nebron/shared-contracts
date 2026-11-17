@@ -1,0 +1,374 @@
+openapi: 3.1.0
+info:
+  title: Zenuxs Auth Service API
+  version: 1.0.0
+  description: Production-grade authentication microservice for the Zenuxs polyrepo ecosystem.
+servers:
+  - url: http://localhost:4001
+    description: Local development server
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      description: Registers a new user with email and password. Does not issue tokens. Returns the created user ID.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Email already registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      summary: User login
+      description: Authenticates user with email and password. Generates an RS256 JWT access token and an opaque refresh token.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      description: Rotates refresh token and issues a new access token. If a previously revoked refresh token is presented, the entire session chain is revoked (reuse detection).
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token expired or revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/logout:
+    post:
+      summary: Log out user
+      description: Revokes the session associated with the provided refresh token. Idempotent (always returns 204).
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+      responses:
+        '204':
+          description: Successfully logged out
+
+  /auth/me:
+    get:
+      summary: Get current authenticated user
+      description: Verifies Bearer access token and returns token claims (userId, email, sessionId).
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current authenticated user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeResponse'
+        '401':
+          description: Missing, invalid, or expired access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /.well-known/jwks.json:
+    get:
+      summary: JSON Web Key Set (JWKS)
+      description: Returns the public RSA keys for verifying asymmetric RS256 JWT tokens issued by this service.
+      tags:
+        - Cryptography
+      responses:
+        '200':
+          description: Public keys JWKS
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: "public, max-age=3600"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWKSResponse'
+
+  /health:
+    get:
+      summary: Health check
+      description: Evaluates database (MongoDB) and cache (Redis) connectivity.
+      tags:
+        - Health
+      responses:
+        '200':
+          description: All subsystems are healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: One or more subsystems are unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@zenuxs.com
+        password:
+          type: string
+          format: password
+          minLength: 12
+          maxLength: 128
+          example: SecurePass123!
+
+    RegisterResponse:
+      type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
+          example: 65123456789abcdef0123456
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@zenuxs.com
+        password:
+          type: string
+          format: password
+          example: SecurePass123!
+
+    TokenResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+        - expiresIn
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJSUzI1NiIsImtpZCI6ImRldi0xIn0...
+        refreshToken:
+          type: string
+          example: 3b1a8f94d9302e1c9408b472ea638510cb45762a3928173450912cb849182390
+        expiresIn:
+          type: integer
+          example: 900
+
+    RefreshRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          example: 3b1a8f94d9302e1c9408b472ea638510cb45762a3928173450912cb849182390
+
+    LogoutRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          example: 3b1a8f94d9302e1c9408b472ea638510cb45762a3928173450912cb849182390
+
+    MeResponse:
+      type: object
+      required:
+        - userId
+        - email
+        - sessionId
+      properties:
+        userId:
+          type: string
+          example: 65123456789abcdef0123456
+        email:
+          type: string
+          format: email
+          example: user@zenuxs.com
+        sessionId:
+          type: string
+          example: 65123456789abcdef0123457
+
+    JWK:
+      type: object
+      required:
+        - kty
+        - kid
+        - use
+        - alg
+        - n
+        - e
+      properties:
+        kty:
+          type: string
+          example: RSA
+        kid:
+          type: string
+          example: dev-1
+        use:
+          type: string
+          example: sig
+        alg:
+          type: string
+          example: RS256
+        n:
+          type: string
+        e:
+          type: string
+          example: AQAB
+
+    JWKSResponse:
+      type: object
+      required:
+        - keys
+      properties:
+        keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/JWK'
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - db
+        - redis
+      properties:
+        status:
+          type: string
+          example: ok
+        db:
+          type: string
+          example: ok
+        redis:
+          type: string
+          example: ok
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              example: INVALID_CREDENTIALS
+            message:
+              type: string
+              example: Invalid email or password

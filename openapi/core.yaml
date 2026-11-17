@@ -1,0 +1,425 @@
+openapi: 3.1.0
+info:
+  title: Zenuxs Core API
+  description: Production-grade Core API service for Zenuxs microservice platform
+  version: 1.1.0
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: RS256 JWT issued by auth-service with audience "core"
+  schemas: {}
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      description: Liveness and dependency readiness check
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  mongo:
+                    type: string
+                  redis:
+                    type: string
+                  jwks:
+                    type: string
+                required:
+                  - status
+                  - mongo
+                  - redis
+                  - jwks
+        "503":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  mongo:
+                    type: string
+                  redis:
+                    type: string
+                  jwks:
+                    type: string
+  /internal/health:
+    get:
+      tags:
+        - Health
+      description: Internal debugging endpoint exposing JWKS cache status and age
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  jwks:
+                    type: object
+                    properties:
+                      isLoaded:
+                        type: boolean
+                      ageSeconds:
+                        type:
+                          - number
+                          - "null"
+                      lastFetchedAt:
+                        type:
+                          - string
+                          - "null"
+                      keyCount:
+                        type: number
+                      jwksUrl:
+                        type: string
+                      lastError:
+                        type:
+                          - string
+                          - "null"
+  /internal/cleanup-orphans:
+    post:
+      tags:
+        - Internal
+      description: Trigger cleanup of unconfirmed orphaned media files older than 24 hours
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: x-internal-token
+          required: false
+        - schema:
+            type: string
+          in: header
+          name: authorization
+          required: false
+      responses:
+        "200":
+          description: Default Response
+  /meta:
+    get:
+      tags:
+        - Meta
+      description: "Public metadata: supported languages, themes, and media upload limits"
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  languages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        name:
+                          type: string
+                  themes:
+                    type: array
+                    items:
+                      type: string
+                  defaultLanguage:
+                    type: string
+                  limits:
+                    type: object
+                    properties:
+                      avatarMaxBytes:
+                        type: number
+                      bannerMaxBytes:
+                        type: number
+                      bioMaxChars:
+                        type: number
+                      aboutMaxChars:
+                        type: number
+                      nameMaxChars:
+                        type: number
+                  acceptedImageTypes:
+                    type: array
+                    items:
+                      type: string
+  /me:
+    get:
+      tags:
+        - Profile
+      description: Get current user profile
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  username:
+                    type: string
+                  name:
+                    type:
+                      - string
+                      - "null"
+                  dateOfBirth:
+                    type:
+                      - string
+                      - "null"
+                  about:
+                    type:
+                      - string
+                      - "null"
+                  bio:
+                    type:
+                      - string
+                      - "null"
+                  language:
+                    type: string
+                  theme:
+                    type: string
+                  avatarUrl:
+                    type:
+                      - string
+                      - "null"
+                  bannerUrl:
+                    type:
+                      - string
+                      - "null"
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type:
+                      - string
+                      - "null"
+                required:
+                  - userId
+                  - username
+                  - language
+                  - theme
+                  - createdAt
+    patch:
+      tags:
+        - Profile
+      description: Update current user profile information and preferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 80
+                dateOfBirth:
+                  type: string
+                  pattern: ^\d{4}-\d{2}-\d{2}$
+                about:
+                  type: string
+                  maxLength: 2000
+                bio:
+                  type: string
+                  maxLength: 300
+                language:
+                  type: string
+                theme:
+                  type: string
+                  enum:
+                    - light
+                    - dark
+                    - system
+              additionalProperties: false
+      responses:
+        "200":
+          description: Default Response
+  /me/avatar/upload-url:
+    post:
+      tags:
+        - Media
+      description: Request a presigned POST slot for avatar upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - contentType
+                - contentLength
+              properties:
+                contentType:
+                  type: string
+                  enum:
+                    - image/jpeg
+                    - image/png
+                    - image/webp
+                contentLength:
+                  type: number
+      responses:
+        "200":
+          description: Default Response
+  /me/avatar/confirm:
+    post:
+      tags:
+        - Media
+      description: Confirm avatar upload and update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - objectKey
+              properties:
+                objectKey:
+                  type: string
+      responses:
+        "200":
+          description: Default Response
+  /me/avatar:
+    delete:
+      tags:
+        - Media
+      description: Remove user avatar and delete file from storage
+      responses:
+        "200":
+          description: Default Response
+  /me/banner/upload-url:
+    post:
+      tags:
+        - Media
+      description: Request a presigned POST slot for banner upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - contentType
+                - contentLength
+              properties:
+                contentType:
+                  type: string
+                  enum:
+                    - image/jpeg
+                    - image/png
+                    - image/webp
+                contentLength:
+                  type: number
+      responses:
+        "200":
+          description: Default Response
+  /me/banner/confirm:
+    post:
+      tags:
+        - Media
+      description: Confirm banner upload and update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - objectKey
+              properties:
+                objectKey:
+                  type: string
+      responses:
+        "200":
+          description: Default Response
+  /me/banner:
+    delete:
+      tags:
+        - Media
+      description: Remove user banner and delete file from storage
+      responses:
+        "200":
+          description: Default Response
+  /username/check:
+    get:
+      tags:
+        - Profile
+      description: Public check if a username is available
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: username
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available:
+                    type: boolean
+                  reason:
+                    type: string
+                    enum:
+                      - taken
+                      - reserved
+                      - invalid_format
+                required:
+                  - available
+  /me/username:
+    patch:
+      tags:
+        - Profile
+      description: Claim or change username for the authenticated user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+                - username
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                required:
+                  - username
+servers:
+  - url: /
+    description: Current environment
+tags:
+  - name: Profile
+    description: User profile management
+  - name: Media
+    description: Avatar and banner media uploads via Cloudflare R2
+  - name: Meta
+    description: Public metadata and configuration limits
+  - name: Health
+    description: System health and readiness checks
+  - name: Internal
+    description: Internal operations and maintenance

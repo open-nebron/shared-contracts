@@ -1,0 +1,7 @@
+# Placeholder for voice-service OpenAPI specification
+# To be populated when voice-service endpoints are defined.
+openapi: 3.1.0
+info:
+  title: Zenuxs Voice Service API (Placeholder)
+  version: 0.1.0
+paths: {}

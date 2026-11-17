@@ -1,0 +1,7 @@
+# Placeholder for chat-service OpenAPI specification
+# To be populated when chat-service endpoints are defined.
+openapi: 3.1.0
+info:
+  title: Zenuxs Chat Service API (Placeholder)
+  version: 0.1.0
+paths: {}

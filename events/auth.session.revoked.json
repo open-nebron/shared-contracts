@@ -1,0 +1,11 @@
+{
+  "$id": "auth.session.revoked",
+  "type": "object",
+  "required": ["userId", "sessionId", "reason"],
+  "properties": {
+    "userId":    { "type": "string" },
+    "sessionId": { "type": "string" },
+    "reason":    { "type": "string", "enum": ["logout", "expired", "reuse_detected", "admin"] }
+  },
+  "additionalProperties": false
+}

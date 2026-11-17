@@ -1,0 +1,13 @@
+{
+  "$id": "core.profile.updated",
+  "type": "object",
+  "required": ["userId", "updatedAt"],
+  "properties": {
+    "userId":     { "type": "string" },
+    "username":   { "type": "string" },
+    "name":       { "type": ["string", "null"] },
+    "avatarUrl":  { "type": ["string", "null"] },
+    "updatedAt":  { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

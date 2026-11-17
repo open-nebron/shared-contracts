@@ -1,0 +1,6 @@
+{
+  "auth.user.registered":   "./auth.user.registered.json",
+  "auth.session.revoked":   "./auth.session.revoked.json",
+  "core.profile.updated":   "./core.profile.updated.json",
+  "voice.call.ringing":     "./voice.call.ringing.json"
+}
