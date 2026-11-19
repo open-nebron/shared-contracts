@@ -1,7 +1,7 @@
 {
-  "name": "@zenuxs/contracts",
+  "name": "@nebron/contracts",
   "version": "0.1.0",
-  "description": "Single source of truth for API schemas and event contracts across Zenuxs polyrepo",
+  "description": "Single source of truth for API schemas and event contracts across Nebron polyrepo",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

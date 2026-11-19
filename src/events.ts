@@ -136,7 +136,7 @@ export const EventSchema = z.discriminatedUnion('type', [
   CoreRelationshipUnmutedEventSchema,
 ]);
 
-export type ZenuxsEvent =
+export type NebronEvent =
   | { type: 'auth.user.registered'; payload: AuthUserRegistered }
   | { type: 'auth.session.revoked'; payload: AuthSessionRevoked }
   | { type: 'core.profile.updated'; payload: CoreProfileUpdated }
@@ -145,8 +145,6 @@ export type ZenuxsEvent =
   | { type: 'core.relationship.unblocked'; payload: CoreRelationshipUnblocked }
   | { type: 'core.relationship.muted'; payload: CoreRelationshipMuted }
   | { type: 'core.relationship.unmuted'; payload: CoreRelationshipUnmuted };
-
-export type NebronEvent = ZenuxsEvent;
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.

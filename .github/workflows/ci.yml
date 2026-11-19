@@ -41,12 +41,12 @@ jobs:
           npm pkg set type=module
           npm install "$GITHUB_WORKSPACE"
           node -e '
-            import { parseEvent } from "@zenuxs/contracts";
+            import { parseEvent } from "@nebron/contracts";
             const evt = parseEvent({
               type: "auth.user.registered",
               payload: {
                 userId: "usr_smoke_test",
-                email: "ci-smoke@zenuxs.io",
+                email: "ci-smoke@nebron.io",
                 createdAt: new Date().toISOString()
               }
             });

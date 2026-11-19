@@ -6,7 +6,7 @@ import {
   AuthSessionRevokedSchema,
   CoreProfileUpdatedSchema,
   VoiceCallRingingSchema,
-  type ZenuxsEvent,
+  type NebronEvent,
 } from '../src/events.js';
 
 describe('Event Schemas and parseEvent', () => {
@@ -16,7 +16,7 @@ describe('Event Schemas and parseEvent', () => {
         type: 'auth.user.registered',
         payload: {
           userId: 'usr_123',
-          email: 'test@zenuxs.io',
+          email: 'test@nebron.io',
           createdAt: '2026-11-17T12:00:00.000Z',
         },
       };
@@ -24,7 +24,7 @@ describe('Event Schemas and parseEvent', () => {
       const result = parseEvent(raw);
       expect(result.type).toBe('auth.user.registered');
       expect(result.payload.userId).toBe('usr_123');
-      expect(result.payload.email).toBe('test@zenuxs.io');
+      expect(result.payload.email).toBe('test@nebron.io');
     });
 
     it('throws on invalid payload (missing fields / bad email)', () => {
@@ -53,7 +53,7 @@ describe('Event Schemas and parseEvent', () => {
           type: 'auth.user.registered',
           payload: {
             userId: 'usr_123',
-            email: 'test@zenuxs.io',
+            email: 'test@nebron.io',
             createdAt: 'invalid-datetime',
           },
         })
@@ -66,7 +66,7 @@ describe('Event Schemas and parseEvent', () => {
           type: 'auth.user.registered',
           payload: {
             userId: 'usr_123',
-            email: 'test@zenuxs.io',
+            email: 'test@nebron.io',
             createdAt: '2026-11-17T12:00:00.000Z',
             unexpectedField: true,
           },

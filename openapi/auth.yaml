@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: Zenuxs Auth Service API
+  title: Nebron Auth Service API
   version: 1.0.0
-  description: Production-grade authentication microservice for the Zenuxs polyrepo ecosystem.
+  description: Production-grade authentication microservice for the Nebron polyrepo ecosystem.
 servers:
   - url: http://localhost:4001
     description: Local development server
@@ -215,7 +215,7 @@ components:
         email:
           type: string
           format: email
-          example: user@zenuxs.com
+          example: user@nebron.com
         password:
           type: string
           format: password
@@ -241,7 +241,7 @@ components:
         email:
           type: string
           format: email
-          example: user@zenuxs.com
+          example: user@nebron.com
         password:
           type: string
           format: password
@@ -295,7 +295,7 @@ components:
         email:
           type: string
           format: email
-          example: user@zenuxs.com
+          example: user@nebron.com
         sessionId:
           type: string
           example: 65123456789abcdef0123457

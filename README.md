@@ -1,14 +1,14 @@
-# @zenuxs/contracts
+# @nebron/contracts
 
-Single source of truth for API schemas and event contracts across the Zenuxs polyrepo ecosystem.
+Single source of truth for API schemas and event contracts across the Nebron polyrepo ecosystem.
 
 ---
 
 ## 1. What This Repository Is
 
-`shared-contracts` is a centralized contract package (`@zenuxs/contracts`) containing:
+`shared-contracts` is a centralized contract package (`@nebron/contracts`) containing:
 - **OpenAPI 3.1 specifications** for HTTP REST microservices (`auth-service`, `core-api`, `chat-service`, `voice-service`).
-- **JSON Schema (draft-07)** event contracts for asynchronous message passing via Redis Streams (`zenuxs.events`).
+- **JSON Schema (draft-07)** event contracts for asynchronous message passing via Redis Streams (`nebron.events`).
 - **Generated TypeScript types** via `openapi-typescript` and `json-schema-to-typescript`.
 - **Runtime validation** using `zod` schemas and a unified event dispatcher (`parseEvent`).
 
@@ -23,7 +23,7 @@ In a microservice polyrepo architecture, microservices and frontends evolve inde
 - **Hand-parsed event payloads fail unpredictably**: Services consuming messages from Redis Streams often rely on informal assumptions rather than validated schemas.
 - **Duplicated schema definitions waste effort**: Multiple repos duplicate identical TypeScript interfaces or validation logic.
 
-`@zenuxs/contracts` solves this by acting as the authoritative schema registry.
+`@nebron/contracts` solves this by acting as the authoritative schema registry.
 
 ---
 
@@ -62,7 +62,7 @@ flowchart LR
 
 ## 4. Adding a New Event
 
-To introduce a new event type to the Zenuxs ecosystem:
+To introduce a new event type to the Nebron ecosystem:
 
 1. **Create the JSON Schema file**:
    Add `events/<domain>.<entity>.<action>.json` conforming to JSON Schema draft-07:
@@ -104,7 +104,7 @@ To introduce a new event type to the Zenuxs ecosystem:
    }).strict();
    export type ChatMessageSent = z.infer<typeof ChatMessageSentSchema>;
 
-   // Add to EventSchema discriminated union and ZenuxsEvent type
+   // Add to EventSchema discriminated union and NebronEvent type
    ```
 
 4. **Rebuild & Test**:
@@ -118,29 +118,29 @@ To introduce a new event type to the Zenuxs ecosystem:
 
 ### Installation
 
-Consumers reference `@zenuxs/contracts` via a local file reference in `package.json`:
+Consumers reference `@nebron/contracts` via a local file reference in `package.json`:
 
 ```json
 {
   "dependencies": {
-    "@zenuxs/contracts": "file:../shared-contracts"
+    "@nebron/contracts": "file:../shared-contracts"
   }
 }
 ```
 
 Run `npm install` inside the consumer repository.
 
-### Consuming Events (e.g. from Redis Stream `zenuxs.events`)
+### Consuming Events (e.g. from Redis Stream `nebron.events`)
 
-Every consumer of the `zenuxs.events` stream must use `parseEvent` — never hand-parse event payloads.
+Every consumer of the `nebron.events` stream must use `parseEvent` — never hand-parse event payloads.
 
 ```typescript
-import { parseEvent, type ZenuxsEvent } from '@zenuxs/contracts';
+import { parseEvent, type NebronEvent } from '@nebron/contracts';
 
 // In your stream consumer loop:
 function handleRawMessage(rawMessage: unknown) {
   try {
-    const event: ZenuxsEvent = parseEvent(rawMessage);
+    const event: NebronEvent = parseEvent(rawMessage);
 
     switch (event.type) {
       case 'auth.user.registered':
@@ -173,7 +173,7 @@ import type {
   CoreAPI,
   ApiSuccess,
   ApiError
-} from '@zenuxs/contracts';
+} from '@nebron/contracts';
 
 // Extract request/response types for endpoints:
 type RegisterRequestBody = AuthAPI['/auth/register']['post']['requestBody']['content']['application/json'];
@@ -208,5 +208,5 @@ Refer to [`../infra/docs/ports.md`](../infra/docs/ports.md) for full port alloca
 - `core-api`: `http://localhost:4002`
 - `chat-service`: `http://localhost:4003`
 - `voice-service`: `http://localhost:4004`
-- Redis stream: `redis://localhost:6379` (Stream: `zenuxs.events`)
+- Redis stream: `redis://localhost:6379` (Stream: `nebron.events`)
 - MongoDB: `mongodb://localhost:27017`
