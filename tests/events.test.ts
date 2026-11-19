@@ -181,6 +181,131 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('core.relationship.blocked', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.relationship.blocked',
+        payload: {
+          fromUserId: 'usr_from',
+          toUserId: 'usr_to',
+          at: '2026-11-19T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.relationship.blocked');
+      if (result.type === 'core.relationship.blocked') {
+        expect(result.payload.fromUserId).toBe('usr_from');
+        expect(result.payload.toUserId).toBe('usr_to');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.relationship.blocked',
+          payload: {
+            fromUserId: 'usr_from',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.relationship.unblocked', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.relationship.unblocked',
+        payload: {
+          fromUserId: 'usr_from',
+          toUserId: 'usr_to',
+          at: '2026-11-19T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.relationship.unblocked');
+      if (result.type === 'core.relationship.unblocked') {
+        expect(result.payload.fromUserId).toBe('usr_from');
+        expect(result.payload.toUserId).toBe('usr_to');
+      }
+    });
+  });
+
+  describe('core.relationship.muted', () => {
+    it('succeeds on valid payload with until set or null', () => {
+      const raw = {
+        type: 'core.relationship.muted',
+        payload: {
+          fromUserId: 'usr_from',
+          toUserId: 'usr_to',
+          mute: {
+            calls: true,
+            messages: false,
+            until: '2026-11-20T12:00:00.000Z',
+          },
+          at: '2026-11-19T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.relationship.muted');
+      if (result.type === 'core.relationship.muted') {
+        expect(result.payload.mute.calls).toBe(true);
+        expect(result.payload.mute.messages).toBe(false);
+        expect(result.payload.mute.until).toBe('2026-11-20T12:00:00.000Z');
+      }
+
+      const rawNullUntil = {
+        type: 'core.relationship.muted',
+        payload: {
+          fromUserId: 'usr_from',
+          toUserId: 'usr_to',
+          mute: {
+            calls: false,
+            messages: true,
+            until: null,
+          },
+          at: '2026-11-19T12:00:00.000Z',
+        },
+      };
+      const resNull = parseEvent(rawNullUntil);
+      expect(resNull.type).toBe('core.relationship.muted');
+    });
+
+    it('throws on invalid mute fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.relationship.muted',
+          payload: {
+            fromUserId: 'usr_from',
+            toUserId: 'usr_to',
+            mute: {
+              calls: 'not_a_boolean',
+            },
+            at: '2026-11-19T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.relationship.unmuted', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.relationship.unmuted',
+        payload: {
+          fromUserId: 'usr_from',
+          toUserId: 'usr_to',
+          at: '2026-11-19T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.relationship.unmuted');
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

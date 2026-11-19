@@ -1,0 +1,11 @@
+{
+  "$id": "core.relationship.unblocked",
+  "type": "object",
+  "required": ["fromUserId", "toUserId", "at"],
+  "properties": {
+    "fromUserId": { "type": "string" },
+    "toUserId":   { "type": "string" },
+    "at":         { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

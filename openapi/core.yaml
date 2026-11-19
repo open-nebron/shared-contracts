@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Zenuxs Core API
-  description: Production-grade Core API service for Zenuxs microservice platform
+  title: Nebron Core API
+  description: Production-grade Core API service for Nebron microservice platform
   version: 1.1.0
 components:
   securitySchemes:
@@ -409,12 +409,213 @@ paths:
                     type: string
                 required:
                   - username
+  /relationships/check:
+    get:
+      tags:
+        - Relationships
+      description: Internal endpoint to batch-check block and mute state against multiple user IDs
+      parameters:
+        - name: userIds
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated target user IDs
+        - name: fromUserId
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional requesting user ID
+        - name: x-internal-token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Internal service token matching INTERNAL_TOKEN env
+      responses:
+        "200":
+          description: Relationship check result
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: private, max-age=60
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        blocked:
+                          type: boolean
+                        muted:
+                          type: object
+                          properties:
+                            calls:
+                              type: boolean
+                            messages:
+                              type: boolean
+                          required:
+                            - calls
+                            - messages
+                      required:
+                        - blocked
+                        - muted
+                required:
+                  - data
+  /relationships/{userId}:
+    get:
+      tags:
+        - Relationships
+      description: Returns the caller's relationship to the specified user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target user ID
+      responses:
+        "200":
+          description: Caller's relationship to target user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  blocked:
+                    type: boolean
+                  mute:
+                    type: object
+                    properties:
+                      calls:
+                        type: boolean
+                      messages:
+                        type: boolean
+                      until:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - calls
+                      - messages
+                      - until
+                required:
+                  - blocked
+                  - mute
+  /relationships/{userId}/block:
+    post:
+      tags:
+        - Relationships
+      description: Block a user. Rejects self-block.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target user ID to block
+      responses:
+        "204":
+          description: User blocked successfully
+    delete:
+      tags:
+        - Relationships
+      description: Unblock a user.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target user ID to unblock
+      responses:
+        "204":
+          description: User unblocked successfully
+  /relationships/{userId}/mute:
+    post:
+      tags:
+        - Relationships
+      description: Mute calls and/or messages from a user, optionally until a timestamp
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target user ID to mute
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                calls:
+                  type: boolean
+                messages:
+                  type: boolean
+                until:
+                  type:
+                    - string
+                    - "null"
+      responses:
+        "200":
+          description: Mute updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  calls:
+                    type: boolean
+                  messages:
+                    type: boolean
+                  until:
+                    type:
+                      - string
+                      - "null"
+                required:
+                  - calls
+                  - messages
+                  - until
+    delete:
+      tags:
+        - Relationships
+      description: Unmute calls and messages from a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Target user ID to unmute
+      responses:
+        "204":
+          description: User unmuted successfully
 servers:
   - url: /
     description: Current environment
 tags:
   - name: Profile
     description: User profile management
+  - name: Relationships
+    description: Per-user-pair block and mute state management
   - name: Media
     description: Avatar and banner media uploads via Cloudflare R2
   - name: Meta

@@ -1,7 +1,575 @@
-# Placeholder for chat-service OpenAPI specification
-# To be populated when chat-service endpoints are defined.
 openapi: 3.1.0
 info:
-  title: Zenuxs Chat Service API (Placeholder)
-  version: 0.1.0
-paths: {}
+  title: Nebron Chat Service
+  description: Real-time chat and messaging microservice for Nebron
+  version: 1.0.0
+servers:
+  - url: /
+    description: Current environment
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Service health and readiness check
+      description: Returns health status of ScyllaDB, Redis, and JWKS cache.
+      responses:
+        '200':
+          description: All dependencies are healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: One or more dependencies are down
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /conversations:
+    post:
+      tags:
+        - Conversations
+      summary: Start or get a 1:1 direct conversation
+      description: Computes a deterministic conversation ID for the peer user pair and seeds conversation records idempotently.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartConversationRequest'
+      responses:
+        '200':
+          description: Conversation created or retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationResponse'
+        '400':
+          description: Invalid payload, invalid UUID, or attempting to chat with self
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing or invalid authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (10/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+    get:
+      tags:
+        - Conversations
+      summary: List conversations for authenticated user
+      description: Returns conversations ordered descending by last message timestamp with pagination cursor.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 30
+            minimum: 1
+            maximum: 100
+          description: Maximum number of conversations to return
+        - in: query
+          name: before
+          schema:
+            type: string
+            format: date-time
+          description: ISO timestamp cursor to fetch conversations prior to
+      responses:
+        '200':
+          description: List of user conversations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationListResponse'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (300/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /conversations/{id}/messages:
+    get:
+      tags:
+        - Messages
+      summary: List messages in conversation
+      description: Returns messages in descending order with timeuuid pagination.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 30
+            minimum: 1
+            maximum: 100
+          description: Page size
+        - in: query
+          name: before
+          schema:
+            type: string
+            format: uuid
+          description: Message timeuuid cursor
+      responses:
+        '200':
+          description: Page of messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageListResponse'
+        '400':
+          description: Invalid UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Caller is not a member of this conversation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (300/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+    post:
+      tags:
+        - Messages
+      summary: Send a message to conversation
+      description: Sends a new text message (1-4000 characters) and updates unread counts.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '201':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          description: Empty message, message too long, or invalid payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Not a member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (30/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /conversations/{id}/read:
+    post:
+      tags:
+        - Receipts
+      summary: Mark conversation messages as read
+      description: Updates caller's read receipt up to messageId and clears unread count.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkReadRequest'
+      responses:
+        '204':
+          description: Receipt updated and unread cleared
+        '400':
+          description: Message not in conversation or invalid UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Not a member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (120/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /conversations/{id}/messages/{messageId}:
+    delete:
+      tags:
+        - Messages
+      summary: Soft-delete a message
+      description: Marks a message as deleted (only allowed for message sender).
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Message timeuuid
+      responses:
+        '204':
+          description: Message soft-deleted
+        '400':
+          description: Invalid UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Not a member or not message owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Message or conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (10/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: RS256 JWT issued by auth-service with audience "chat"
+
+  schemas:
+    ErrorEnvelope:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              example: invalid_payload
+            message:
+              type: string
+              example: Invalid payload provided
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - scylla
+        - redis
+        - jwks
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded]
+          example: ok
+        scylla:
+          type: string
+          enum: [ok, down]
+          example: ok
+        redis:
+          type: string
+          enum: [ok, down]
+          example: ok
+        jwks:
+          type: string
+          enum: [ok, stale]
+          example: ok
+        version:
+          type: string
+          example: 1.0.0
+
+    StartConversationRequest:
+      type: object
+      required:
+        - peerUserId
+      properties:
+        peerUserId:
+          type: string
+          format: uuid
+          example: 11111111-1111-4111-8111-111111111111
+
+    Conversation:
+      type: object
+      required:
+        - id
+        - kind
+        - createdAt
+        - peerUserId
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          example: direct
+        createdAt:
+          type: string
+          format: date-time
+        peerUserId:
+          type: string
+          format: uuid
+
+    ConversationResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/Conversation'
+
+    UserConversationItem:
+      type: object
+      required:
+        - id
+        - peerUserId
+        - unreadCount
+      properties:
+        id:
+          type: string
+          format: uuid
+        peerUserId:
+          type: string
+          format: uuid
+        lastMessage:
+          nullable: true
+          type: object
+          required:
+            - id
+            - body
+            - senderId
+            - createdAt
+          properties:
+            id:
+              type: string
+            body:
+              type: string
+            senderId:
+              type: string
+              format: uuid
+            createdAt:
+              type: string
+              format: date-time
+        unreadCount:
+          type: integer
+          example: 0
+        lastMessageAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    ConversationListResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserConversationItem'
+
+    SendMessageRequest:
+      type: object
+      required:
+        - body
+      properties:
+        body:
+          type: string
+          minLength: 1
+          maxLength: 4000
+          example: Hello world!
+
+    Message:
+      type: object
+      required:
+        - id
+        - conversationId
+        - senderId
+        - body
+        - createdAt
+        - deleted
+      properties:
+        id:
+          type: string
+          description: Message timeuuid
+        conversationId:
+          type: string
+          format: uuid
+        senderId:
+          type: string
+          format: uuid
+        body:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        editedAt:
+          type: string
+          format: date-time
+          nullable: true
+        deleted:
+          type: boolean
+
+    MessageResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/Message'
+
+    MessageListResponse:
+      type: object
+      required:
+        - data
+        - hasMore
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        hasMore:
+          type: boolean
+          example: false
+
+    MarkReadRequest:
+      type: object
+      required:
+        - messageId
+      properties:
+        messageId:
+          type: string
+          description: timeuuid of the latest read message
+          example: be15a7f0-e35d-11f1-abbd-a1b88e74a509

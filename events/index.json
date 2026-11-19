@@ -1,6 +1,10 @@
 {
-  "auth.user.registered":   "./auth.user.registered.json",
-  "auth.session.revoked":   "./auth.session.revoked.json",
-  "core.profile.updated":   "./core.profile.updated.json",
-  "voice.call.ringing":     "./voice.call.ringing.json"
+  "auth.user.registered":         "./auth.user.registered.json",
+  "auth.session.revoked":         "./auth.session.revoked.json",
+  "core.profile.updated":         "./core.profile.updated.json",
+  "voice.call.ringing":           "./voice.call.ringing.json",
+  "core.relationship.blocked":    "./core.relationship.blocked.json",
+  "core.relationship.unblocked":  "./core.relationship.unblocked.json",
+  "core.relationship.muted":      "./core.relationship.muted.json",
+  "core.relationship.unmuted":    "./core.relationship.unmuted.json"
 }

@@ -1,0 +1,21 @@
+{
+  "$id": "core.relationship.muted",
+  "type": "object",
+  "required": ["fromUserId", "toUserId", "mute", "at"],
+  "properties": {
+    "fromUserId": { "type": "string" },
+    "toUserId":   { "type": "string" },
+    "mute": {
+      "type": "object",
+      "required": ["calls", "messages", "until"],
+      "properties": {
+        "calls":    { "type": "boolean" },
+        "messages": { "type": "boolean" },
+        "until":    { "type": ["string", "null"], "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
