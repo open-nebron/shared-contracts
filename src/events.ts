@@ -85,6 +85,58 @@ export const CoreRelationshipUnmutedSchema = z
   .strict();
 export type CoreRelationshipUnmuted = z.infer<typeof CoreRelationshipUnmutedSchema>;
 
+export const ChatConversationCreatedSchema = z
+  .object({
+    conversationId: z.string(),
+    kind: z.literal('group'),
+    name: z.string(),
+    ownerId: z.string(),
+    memberIds: z.array(z.string()),
+    createdAt: z.string().datetime(),
+  })
+  .strict();
+export type ChatConversationCreated = z.infer<typeof ChatConversationCreatedSchema>;
+
+export const ChatConversationMemberAddedSchema = z
+  .object({
+    conversationId: z.string(),
+    addedBy: z.string(),
+    userIds: z.array(z.string()),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type ChatConversationMemberAdded = z.infer<typeof ChatConversationMemberAddedSchema>;
+
+export const ChatConversationMemberRemovedSchema = z
+  .object({
+    conversationId: z.string(),
+    removedBy: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+    newOwnerId: z.string().optional(),
+  })
+  .strict();
+export type ChatConversationMemberRemoved = z.infer<typeof ChatConversationMemberRemovedSchema>;
+
+export const ChatConversationRenamedSchema = z
+  .object({
+    conversationId: z.string(),
+    renamedBy: z.string(),
+    newName: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type ChatConversationRenamed = z.infer<typeof ChatConversationRenamedSchema>;
+
+export const ChatConversationDeletedSchema = z
+  .object({
+    conversationId: z.string(),
+    deletedBy: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type ChatConversationDeleted = z.infer<typeof ChatConversationDeletedSchema>;
+
 export const AuthUserRegisteredEventSchema = z.object({
   type: z.literal('auth.user.registered'),
   payload: AuthUserRegisteredSchema,
@@ -125,6 +177,31 @@ export const CoreRelationshipUnmutedEventSchema = z.object({
   payload: CoreRelationshipUnmutedSchema,
 });
 
+export const ChatConversationCreatedEventSchema = z.object({
+  type: z.literal('chat.conversation.created'),
+  payload: ChatConversationCreatedSchema,
+});
+
+export const ChatConversationMemberAddedEventSchema = z.object({
+  type: z.literal('chat.conversation.member_added'),
+  payload: ChatConversationMemberAddedSchema,
+});
+
+export const ChatConversationMemberRemovedEventSchema = z.object({
+  type: z.literal('chat.conversation.member_removed'),
+  payload: ChatConversationMemberRemovedSchema,
+});
+
+export const ChatConversationRenamedEventSchema = z.object({
+  type: z.literal('chat.conversation.renamed'),
+  payload: ChatConversationRenamedSchema,
+});
+
+export const ChatConversationDeletedEventSchema = z.object({
+  type: z.literal('chat.conversation.deleted'),
+  payload: ChatConversationDeletedSchema,
+});
+
 export const EventSchema = z.discriminatedUnion('type', [
   AuthUserRegisteredEventSchema,
   AuthSessionRevokedEventSchema,
@@ -134,6 +211,11 @@ export const EventSchema = z.discriminatedUnion('type', [
   CoreRelationshipUnblockedEventSchema,
   CoreRelationshipMutedEventSchema,
   CoreRelationshipUnmutedEventSchema,
+  ChatConversationCreatedEventSchema,
+  ChatConversationMemberAddedEventSchema,
+  ChatConversationMemberRemovedEventSchema,
+  ChatConversationRenamedEventSchema,
+  ChatConversationDeletedEventSchema,
 ]);
 
 export type NebronEvent =
@@ -144,7 +226,12 @@ export type NebronEvent =
   | { type: 'core.relationship.blocked'; payload: CoreRelationshipBlocked }
   | { type: 'core.relationship.unblocked'; payload: CoreRelationshipUnblocked }
   | { type: 'core.relationship.muted'; payload: CoreRelationshipMuted }
-  | { type: 'core.relationship.unmuted'; payload: CoreRelationshipUnmuted };
+  | { type: 'core.relationship.unmuted'; payload: CoreRelationshipUnmuted }
+  | { type: 'chat.conversation.created'; payload: ChatConversationCreated }
+  | { type: 'chat.conversation.member_added'; payload: ChatConversationMemberAdded }
+  | { type: 'chat.conversation.member_removed'; payload: ChatConversationMemberRemoved }
+  | { type: 'chat.conversation.renamed'; payload: ChatConversationRenamed }
+  | { type: 'chat.conversation.deleted'; payload: ChatConversationDeleted };
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.

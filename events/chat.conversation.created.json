@@ -1,0 +1,14 @@
+{
+  "$id": "chat.conversation.created",
+  "type": "object",
+  "required": ["conversationId", "kind", "name", "ownerId", "memberIds", "createdAt"],
+  "properties": {
+    "conversationId": { "type": "string" },
+    "kind":           { "type": "string", "enum": ["group"] },
+    "name":           { "type": "string" },
+    "ownerId":        { "type": "string" },
+    "memberIds":      { "type": "array", "items": { "type": "string" } },
+    "createdAt":      { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

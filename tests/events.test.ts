@@ -306,6 +306,112 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('chat.conversation.created', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.created',
+        payload: {
+          conversationId: 'conv-123',
+          kind: 'group',
+          name: 'General Chat',
+          ownerId: 'usr-1',
+          memberIds: ['usr-1', 'usr-2'],
+          createdAt: '2026-11-20T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.created');
+      expect((result.payload as any).name).toBe('General Chat');
+    });
+
+    it('fails when kind is not group', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.conversation.created',
+          payload: {
+            conversationId: 'conv-123',
+            kind: 'direct',
+            name: 'General Chat',
+            ownerId: 'usr-1',
+            memberIds: ['usr-1', 'usr-2'],
+            createdAt: '2026-11-20T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.conversation.member_added', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.member_added',
+        payload: {
+          conversationId: 'conv-123',
+          addedBy: 'usr-1',
+          userIds: ['usr-3'],
+          at: '2026-11-20T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.member_added');
+    });
+  });
+
+  describe('chat.conversation.member_removed', () => {
+    it('succeeds on valid payload with or without newOwnerId', () => {
+      const raw = {
+        type: 'chat.conversation.member_removed',
+        payload: {
+          conversationId: 'conv-123',
+          removedBy: 'usr-1',
+          userId: 'usr-2',
+          at: '2026-11-20T12:00:00.000Z',
+          newOwnerId: 'usr-3',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.member_removed');
+      expect((result.payload as any).newOwnerId).toBe('usr-3');
+    });
+  });
+
+  describe('chat.conversation.renamed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.renamed',
+        payload: {
+          conversationId: 'conv-123',
+          renamedBy: 'usr-1',
+          newName: 'New Name',
+          at: '2026-11-20T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.renamed');
+      expect((result.payload as any).newName).toBe('New Name');
+    });
+  });
+
+  describe('chat.conversation.deleted', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.deleted',
+        payload: {
+          conversationId: 'conv-123',
+          deletedBy: 'usr-1',
+          at: '2026-11-20T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.deleted');
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

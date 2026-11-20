@@ -1,0 +1,12 @@
+{
+  "$id": "chat.conversation.member_added",
+  "type": "object",
+  "required": ["conversationId", "addedBy", "userIds", "at"],
+  "properties": {
+    "conversationId": { "type": "string" },
+    "addedBy":        { "type": "string" },
+    "userIds":        { "type": "array", "items": { "type": "string" } },
+    "at":             { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

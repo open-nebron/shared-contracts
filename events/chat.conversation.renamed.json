@@ -1,0 +1,12 @@
+{
+  "$id": "chat.conversation.renamed",
+  "type": "object",
+  "required": ["conversationId", "renamedBy", "newName", "at"],
+  "properties": {
+    "conversationId": { "type": "string" },
+    "renamedBy":      { "type": "string" },
+    "newName":        { "type": "string" },
+    "at":             { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

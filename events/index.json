@@ -6,5 +6,10 @@
   "core.relationship.blocked":    "./core.relationship.blocked.json",
   "core.relationship.unblocked":  "./core.relationship.unblocked.json",
   "core.relationship.muted":      "./core.relationship.muted.json",
-  "core.relationship.unmuted":    "./core.relationship.unmuted.json"
+  "core.relationship.unmuted":    "./core.relationship.unmuted.json",
+  "chat.conversation.created":    "./chat.conversation.created.json",
+  "chat.conversation.member_added": "./chat.conversation.member_added.json",
+  "chat.conversation.member_removed": "./chat.conversation.member_removed.json",
+  "chat.conversation.renamed":    "./chat.conversation.renamed.json",
+  "chat.conversation.deleted":    "./chat.conversation.deleted.json"
 }

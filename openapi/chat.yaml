@@ -28,6 +28,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
 
+  /ws:
+    get:
+      tags:
+        - Real-Time WebSocket
+      summary: Real-Time WebSocket Gateway
+      description: |
+        Upgrades HTTP connection to WebSocket for bidirectional real-time messaging, typing indicators, and presence tracking.
+        Requires query parameter `token=<access_token>` containing a valid RS256 Bearer JWT.
+
+        Close Codes:
+        - 4401: Invalid or expired token
+        - 4403: Session revoked
+        - 4408: Maximum concurrent connections exceeded (max 5)
+        - 4409: Frame too large (limit: 32 KB)
+
+        Refer to `route-docs/ws-protocol.md` and `route-docs/ws-errors.md` for full message frame schemas.
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+          description: RS256 JWT access token
+      responses:
+        '101':
+          description: Switching Protocols to WebSocket
+        '401':
+          description: Missing or invalid token (connection closed with 4401)
+        '403':
+          description: Revoked session (connection closed with 4403)
+
   /conversations:
     post:
       tags:
@@ -90,6 +121,13 @@ paths:
             type: string
             format: date-time
           description: ISO timestamp cursor to fetch conversations prior to
+        - in: query
+          name: kind
+          schema:
+            type: string
+            enum: [direct, group, all]
+            default: all
+          description: Filter conversations by kind (direct, group, or all)
       responses:
         '200':
           description: List of user conversations
@@ -111,6 +149,290 @@ paths:
                 $ref: '#/components/schemas/ErrorEnvelope'
         '429':
           description: Rate limit exceeded (300/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /conversations/group:
+    post:
+      tags:
+        - Groups
+      summary: Create a group conversation
+      description: Creates a new group conversation with the authenticated user as the owner.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRequest'
+      responses:
+        '201':
+          description: Group conversation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupConversationResponse'
+        '400':
+          description: Invalid payload, invalid UUIDs, or member cap exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (5/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /conversations/{id}:
+    patch:
+      tags:
+        - Groups
+      summary: Rename group conversation
+      description: Updates the display name of a group conversation. Caller must be the group owner.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RenameGroupRequest'
+      responses:
+        '200':
+          description: Group renamed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupConversationResponse'
+        '400':
+          description: Invalid name length, HTML characters, or invalid UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Caller is not the group owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (10/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /conversations/{id}/members:
+    get:
+      tags:
+        - Groups
+      summary: List group members
+      description: Returns members of the group conversation ordered by join timestamp.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+            minimum: 1
+            maximum: 100
+          description: Max members to return
+        - in: query
+          name: before
+          schema:
+            type: string
+            format: date-time
+          description: ISO timestamp cursor
+      responses:
+        '200':
+          description: Group members list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupMemberListResponse'
+        '400':
+          description: Invalid UUID or query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Caller is not a member of this conversation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (60/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+    post:
+      tags:
+        - Groups
+      summary: Add members to group
+      description: Adds one or more new members to a group. Caller must be the group owner.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMembersRequest'
+      responses:
+        '200':
+          description: Members added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddMembersResponse'
+        '400':
+          description: Invalid payload, user already member, or group size limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Caller is not the group owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (10/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /conversations/{id}/members/{userId}:
+    delete:
+      tags:
+        - Groups
+      summary: Remove member or leave group
+      description: Removes a member from the group (owner only) or allows a member to leave the group.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: User UUID to remove
+      responses:
+        '204':
+          description: Member removed or left successfully
+        '400':
+          description: Invalid UUID or user not in group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Non-owner attempting to remove another user, or caller not a member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (20/min)
           content:
             application/json:
               schema:
@@ -450,19 +772,183 @@ components:
         data:
           $ref: '#/components/schemas/Conversation'
 
+    CreateGroupRequest:
+      type: object
+      required:
+        - name
+        - memberIds
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: Backend Team
+        memberIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+          maxItems: 99
+          example:
+            - 22222222-2222-4222-8222-222222222222
+            - 33333333-3333-4333-8333-333333333333
+
+    GroupConversation:
+      type: object
+      required:
+        - id
+        - kind
+        - name
+        - ownerId
+        - memberIds
+        - memberCount
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum: [group]
+          example: group
+        name:
+          type: string
+          example: Backend Team
+        ownerId:
+          type: string
+          format: uuid
+        memberIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        memberCount:
+          type: integer
+          example: 3
+        createdAt:
+          type: string
+          format: date-time
+
+    GroupConversationResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/GroupConversation'
+
+    AddMembersRequest:
+      type: object
+      required:
+        - userIds
+      properties:
+        userIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+          maxItems: 99
+          example:
+            - 44444444-4444-4444-8444-444444444444
+
+    AddMembersResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - conversationId
+            - added
+            - memberCount
+          properties:
+            conversationId:
+              type: string
+              format: uuid
+            added:
+              type: array
+              items:
+                type: string
+                format: uuid
+            memberCount:
+              type: integer
+              example: 4
+
+    RenameGroupRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: Core Engineering
+
+    GroupMember:
+      type: object
+      required:
+        - userId
+        - role
+        - joinedAt
+      properties:
+        userId:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [owner, member]
+          example: member
+        joinedAt:
+          type: string
+          format: date-time
+
+    GroupMemberListResponse:
+      type: object
+      required:
+        - data
+        - hasMore
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMember'
+        hasMore:
+          type: boolean
+          example: false
+
     UserConversationItem:
       type: object
       required:
         - id
-        - peerUserId
         - unreadCount
       properties:
         id:
           type: string
           format: uuid
+        kind:
+          type: string
+          enum: [direct, group]
+          example: direct
         peerUserId:
           type: string
           format: uuid
+          nullable: true
+        name:
+          type: string
+          nullable: true
+          example: Backend Team
+        ownerId:
+          type: string
+          format: uuid
+          nullable: true
+        memberCount:
+          type: integer
+          nullable: true
+          example: 4
         lastMessage:
           nullable: true
           type: object
