@@ -1,0 +1,14 @@
+{
+  "$id": "voice.call.ended",
+  "type": "object",
+  "required": ["callId", "callerId", "calleeId", "endedBy", "reason", "at"],
+  "properties": {
+    "callId":   { "type": "string" },
+    "callerId": { "type": "string" },
+    "calleeId": { "type": "string" },
+    "endedBy":  { "type": ["string", "null"] },
+    "reason":   { "type": "string", "enum": ["hangup", "reject", "missed", "cancelled", "error", "livekit_closed"] },
+    "at":       { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

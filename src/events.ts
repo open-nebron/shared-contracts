@@ -32,12 +32,68 @@ export type CoreProfileUpdated = z.infer<typeof CoreProfileUpdatedSchema>;
 export const VoiceCallRingingSchema = z
   .object({
     callId: z.string(),
-    fromUserId: z.string(),
-    toUserId: z.string(),
+    callerId: z.string(),
+    calleeId: z.string(),
+    roomName: z.string(),
     startedAt: z.string().datetime(),
   })
   .strict();
 export type VoiceCallRinging = z.infer<typeof VoiceCallRingingSchema>;
+
+export const VoiceCallAcceptedSchema = z
+  .object({
+    callId: z.string(),
+    callerId: z.string(),
+    calleeId: z.string(),
+    acceptedAt: z.string().datetime(),
+  })
+  .strict();
+export type VoiceCallAccepted = z.infer<typeof VoiceCallAcceptedSchema>;
+
+export const VoiceCallRejectedSchema = z
+  .object({
+    callId: z.string(),
+    callerId: z.string(),
+    calleeId: z.string(),
+    rejectedBy: z.string(),
+    reason: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type VoiceCallRejected = z.infer<typeof VoiceCallRejectedSchema>;
+
+export const VoiceCallEndedSchema = z
+  .object({
+    callId: z.string(),
+    callerId: z.string(),
+    calleeId: z.string(),
+    endedBy: z.string().nullable(),
+    reason: z.enum(['hangup', 'reject', 'missed', 'cancelled', 'error', 'livekit_closed']),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type VoiceCallEnded = z.infer<typeof VoiceCallEndedSchema>;
+
+export const VoiceCallMissedSchema = z
+  .object({
+    callId: z.string(),
+    callerId: z.string(),
+    calleeId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type VoiceCallMissed = z.infer<typeof VoiceCallMissedSchema>;
+
+export const VoiceCallCancelledSchema = z
+  .object({
+    callId: z.string(),
+    callerId: z.string(),
+    calleeId: z.string(),
+    cancelledBy: z.string().optional(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type VoiceCallCancelled = z.infer<typeof VoiceCallCancelledSchema>;
 
 export const RelationshipMuteSchema = z
   .object({
@@ -157,6 +213,31 @@ export const VoiceCallRingingEventSchema = z.object({
   payload: VoiceCallRingingSchema,
 });
 
+export const VoiceCallAcceptedEventSchema = z.object({
+  type: z.literal('voice.call.accepted'),
+  payload: VoiceCallAcceptedSchema,
+});
+
+export const VoiceCallRejectedEventSchema = z.object({
+  type: z.literal('voice.call.rejected'),
+  payload: VoiceCallRejectedSchema,
+});
+
+export const VoiceCallEndedEventSchema = z.object({
+  type: z.literal('voice.call.ended'),
+  payload: VoiceCallEndedSchema,
+});
+
+export const VoiceCallMissedEventSchema = z.object({
+  type: z.literal('voice.call.missed'),
+  payload: VoiceCallMissedSchema,
+});
+
+export const VoiceCallCancelledEventSchema = z.object({
+  type: z.literal('voice.call.cancelled'),
+  payload: VoiceCallCancelledSchema,
+});
+
 export const CoreRelationshipBlockedEventSchema = z.object({
   type: z.literal('core.relationship.blocked'),
   payload: CoreRelationshipBlockedSchema,
@@ -207,6 +288,11 @@ export const EventSchema = z.discriminatedUnion('type', [
   AuthSessionRevokedEventSchema,
   CoreProfileUpdatedEventSchema,
   VoiceCallRingingEventSchema,
+  VoiceCallAcceptedEventSchema,
+  VoiceCallRejectedEventSchema,
+  VoiceCallEndedEventSchema,
+  VoiceCallMissedEventSchema,
+  VoiceCallCancelledEventSchema,
   CoreRelationshipBlockedEventSchema,
   CoreRelationshipUnblockedEventSchema,
   CoreRelationshipMutedEventSchema,
@@ -223,6 +309,11 @@ export type NebronEvent =
   | { type: 'auth.session.revoked'; payload: AuthSessionRevoked }
   | { type: 'core.profile.updated'; payload: CoreProfileUpdated }
   | { type: 'voice.call.ringing'; payload: VoiceCallRinging }
+  | { type: 'voice.call.accepted'; payload: VoiceCallAccepted }
+  | { type: 'voice.call.rejected'; payload: VoiceCallRejected }
+  | { type: 'voice.call.ended'; payload: VoiceCallEnded }
+  | { type: 'voice.call.missed'; payload: VoiceCallMissed }
+  | { type: 'voice.call.cancelled'; payload: VoiceCallCancelled }
   | { type: 'core.relationship.blocked'; payload: CoreRelationshipBlocked }
   | { type: 'core.relationship.unblocked'; payload: CoreRelationshipUnblocked }
   | { type: 'core.relationship.muted'; payload: CoreRelationshipMuted }

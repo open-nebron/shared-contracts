@@ -156,8 +156,9 @@ describe('Event Schemas and parseEvent', () => {
         type: 'voice.call.ringing',
         payload: {
           callId: 'call_999',
-          fromUserId: 'usr_1',
-          toUserId: 'usr_2',
+          callerId: 'usr_1',
+          calleeId: 'usr_2',
+          roomName: 'room_123',
           startedAt: '2026-11-17T12:00:00.000Z',
         },
       };
@@ -166,6 +167,9 @@ describe('Event Schemas and parseEvent', () => {
       expect(result.type).toBe('voice.call.ringing');
       if (result.type === 'voice.call.ringing') {
         expect(result.payload.callId).toBe('call_999');
+        expect(result.payload.callerId).toBe('usr_1');
+        expect(result.payload.calleeId).toBe('usr_2');
+        expect(result.payload.roomName).toBe('room_123');
       }
     });
 
@@ -178,6 +182,113 @@ describe('Event Schemas and parseEvent', () => {
           },
         })
       ).toThrow();
+    });
+  });
+
+  describe('voice.call.accepted', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'voice.call.accepted',
+        payload: {
+          callId: 'call_999',
+          callerId: 'usr_1',
+          calleeId: 'usr_2',
+          acceptedAt: '2026-11-17T12:00:05.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.accepted');
+      if (result.type === 'voice.call.accepted') {
+        expect(result.payload.callId).toBe('call_999');
+        expect(result.payload.acceptedAt).toBe('2026-11-17T12:00:05.000Z');
+      }
+    });
+  });
+
+  describe('voice.call.rejected', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'voice.call.rejected',
+        payload: {
+          callId: 'call_999',
+          callerId: 'usr_1',
+          calleeId: 'usr_2',
+          rejectedBy: 'usr_2',
+          reason: 'busy',
+          at: '2026-11-17T12:00:05.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.rejected');
+      if (result.type === 'voice.call.rejected') {
+        expect(result.payload.reason).toBe('busy');
+      }
+    });
+  });
+
+  describe('voice.call.ended', () => {
+    it('succeeds on valid payload with endedBy string', () => {
+      const raw = {
+        type: 'voice.call.ended',
+        payload: {
+          callId: 'call_999',
+          callerId: 'usr_1',
+          calleeId: 'usr_2',
+          endedBy: 'usr_1',
+          reason: 'hangup',
+          at: '2026-11-17T12:05:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.ended');
+      if (result.type === 'voice.call.ended') {
+        expect(result.payload.endedBy).toBe('usr_1');
+        expect(result.payload.reason).toBe('hangup');
+      }
+    });
+
+    it('succeeds on valid payload with endedBy null (livekit_closed or error)', () => {
+      const raw = {
+        type: 'voice.call.ended',
+        payload: {
+          callId: 'call_999',
+          callerId: 'usr_1',
+          calleeId: 'usr_2',
+          endedBy: null,
+          reason: 'livekit_closed',
+          at: '2026-11-17T12:05:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.ended');
+      if (result.type === 'voice.call.ended') {
+        expect(result.payload.endedBy).toBeNull();
+        expect(result.payload.reason).toBe('livekit_closed');
+      }
+    });
+  });
+
+  describe('voice.call.missed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'voice.call.missed',
+        payload: {
+          callId: 'call_999',
+          callerId: 'usr_1',
+          calleeId: 'usr_2',
+          at: '2026-11-17T12:01:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.missed');
+      if (result.type === 'voice.call.missed') {
+        expect(result.payload.calleeId).toBe('usr_2');
+      }
     });
   });
 

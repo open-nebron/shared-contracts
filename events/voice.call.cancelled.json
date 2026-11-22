@@ -1,0 +1,13 @@
+{
+  "$id": "voice.call.cancelled",
+  "type": "object",
+  "required": ["callId", "callerId", "calleeId", "at"],
+  "properties": {
+    "callId":      { "type": "string" },
+    "callerId":    { "type": "string" },
+    "calleeId":    { "type": "string" },
+    "cancelledBy": { "type": "string" },
+    "at":          { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

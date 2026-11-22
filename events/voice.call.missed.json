@@ -1,0 +1,12 @@
+{
+  "$id": "voice.call.missed",
+  "type": "object",
+  "required": ["callId", "callerId", "calleeId", "at"],
+  "properties": {
+    "callId":   { "type": "string" },
+    "callerId": { "type": "string" },
+    "calleeId": { "type": "string" },
+    "at":       { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
