@@ -1313,7 +1313,7 @@ components:
           format: uuid
         role:
           type: string
-          enum: [owner, member]
+          enum: [owner, admin, member]
           example: member
         joinedAt:
           type: string

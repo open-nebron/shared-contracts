@@ -263,6 +263,40 @@ export const ChatMessageReactionRemovedSchema = z
   .strict();
 export type ChatMessageReactionRemoved = z.infer<typeof ChatMessageReactionRemovedSchema>;
 
+export const ChatConversationRoleChangedSchema = z
+  .object({
+    conversationId: z.string(),
+    userId: z.string(),
+    oldRole: z.enum(['owner', 'admin', 'member']),
+    newRole: z.enum(['owner', 'admin', 'member']),
+    changedBy: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type ChatConversationRoleChanged = z.infer<typeof ChatConversationRoleChangedSchema>;
+
+export const ChatConversationInviteCreatedSchema = z
+  .object({
+    conversationId: z.string(),
+    code: z.string(),
+    createdBy: z.string(),
+    expiresAt: z.string().datetime().nullable().optional(),
+    maxUses: z.number().int().nullable().optional(),
+  })
+  .strict();
+export type ChatConversationInviteCreated = z.infer<typeof ChatConversationInviteCreatedSchema>;
+
+export const ChatConversationMemberJoinedSchema = z
+  .object({
+    conversationId: z.string(),
+    userId: z.string(),
+    joinedVia: z.literal('invite'),
+    code: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type ChatConversationMemberJoined = z.infer<typeof ChatConversationMemberJoinedSchema>;
+
 export const AuthUserRegisteredEventSchema = z.object({
   type: z.literal('auth.user.registered'),
   payload: AuthUserRegisteredSchema,
@@ -388,6 +422,21 @@ export const ChatMessageReactionRemovedEventSchema = z.object({
   payload: ChatMessageReactionRemovedSchema,
 });
 
+export const ChatConversationRoleChangedEventSchema = z.object({
+  type: z.literal('chat.conversation.role_changed'),
+  payload: ChatConversationRoleChangedSchema,
+});
+
+export const ChatConversationInviteCreatedEventSchema = z.object({
+  type: z.literal('chat.conversation.invite_created'),
+  payload: ChatConversationInviteCreatedSchema,
+});
+
+export const ChatConversationMemberJoinedEventSchema = z.object({
+  type: z.literal('chat.conversation.member_joined'),
+  payload: ChatConversationMemberJoinedSchema,
+});
+
 export const EventSchema = z.discriminatedUnion('type', [
   AuthUserRegisteredEventSchema,
   AuthSessionRevokedEventSchema,
@@ -414,6 +463,9 @@ export const EventSchema = z.discriminatedUnion('type', [
   ChatMessageUnstarredEventSchema,
   ChatMessageReactionAddedEventSchema,
   ChatMessageReactionRemovedEventSchema,
+  ChatConversationRoleChangedEventSchema,
+  ChatConversationInviteCreatedEventSchema,
+  ChatConversationMemberJoinedEventSchema,
 ]);
 
 export type NebronEvent =
@@ -441,7 +493,10 @@ export type NebronEvent =
   | { type: 'chat.message.starred'; payload: ChatMessageStarred }
   | { type: 'chat.message.unstarred'; payload: ChatMessageUnstarred }
   | { type: 'chat.message.reaction.added'; payload: ChatMessageReactionAdded }
-  | { type: 'chat.message.reaction.removed'; payload: ChatMessageReactionRemoved };
+  | { type: 'chat.message.reaction.removed'; payload: ChatMessageReactionRemoved }
+  | { type: 'chat.conversation.role_changed'; payload: ChatConversationRoleChanged }
+  | { type: 'chat.conversation.invite_created'; payload: ChatConversationInviteCreated }
+  | { type: 'chat.conversation.member_joined'; payload: ChatConversationMemberJoined };
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.

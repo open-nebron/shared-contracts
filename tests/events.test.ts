@@ -741,6 +741,118 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('chat.conversation.role_changed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.role_changed',
+        payload: {
+          conversationId: 'conv-123',
+          userId: 'usr-1',
+          oldRole: 'member',
+          newRole: 'admin',
+          changedBy: 'usr-owner',
+          at: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.role_changed');
+      if (result.type === 'chat.conversation.role_changed') {
+        expect(result.payload.newRole).toBe('admin');
+        expect(result.payload.changedBy).toBe('usr-owner');
+      }
+    });
+
+    it('throws on invalid role', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.conversation.role_changed',
+          payload: {
+            conversationId: 'conv-123',
+            userId: 'usr-1',
+            oldRole: 'member',
+            newRole: 'superadmin',
+            changedBy: 'usr-owner',
+            at: '2026-11-24T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.conversation.invite_created', () => {
+    it('succeeds on valid payload with optional fields', () => {
+      const raw = {
+        type: 'chat.conversation.invite_created',
+        payload: {
+          conversationId: 'conv-123',
+          code: 'inv-abc',
+          createdBy: 'usr-admin',
+          expiresAt: '2026-11-25T12:00:00.000Z',
+          maxUses: 10,
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.invite_created');
+      if (result.type === 'chat.conversation.invite_created') {
+        expect(result.payload.code).toBe('inv-abc');
+        expect(result.payload.maxUses).toBe(10);
+      }
+    });
+
+    it('succeeds on minimal payload (null/omitted optional fields)', () => {
+      const raw = {
+        type: 'chat.conversation.invite_created',
+        payload: {
+          conversationId: 'conv-123',
+          code: 'inv-xyz',
+          createdBy: 'usr-admin',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.invite_created');
+    });
+  });
+
+  describe('chat.conversation.member_joined', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.member_joined',
+        payload: {
+          conversationId: 'conv-123',
+          userId: 'usr-2',
+          joinedVia: 'invite',
+          code: 'inv-abc',
+          at: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.member_joined');
+      if (result.type === 'chat.conversation.member_joined') {
+        expect(result.payload.code).toBe('inv-abc');
+        expect(result.payload.joinedVia).toBe('invite');
+      }
+    });
+
+    it('throws on invalid joinedVia', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.conversation.member_joined',
+          payload: {
+            conversationId: 'conv-123',
+            userId: 'usr-2',
+            joinedVia: 'direct_add',
+            code: 'inv-abc',
+            at: '2026-11-24T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

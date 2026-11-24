@@ -1,0 +1,14 @@
+{
+  "$id": "chat.conversation.role_changed",
+  "type": "object",
+  "required": ["conversationId", "userId", "oldRole", "newRole", "changedBy", "at"],
+  "properties": {
+    "conversationId": { "type": "string" },
+    "userId":         { "type": "string" },
+    "oldRole":        { "type": "string", "enum": ["owner", "admin", "member"] },
+    "newRole":        { "type": "string", "enum": ["owner", "admin", "member"] },
+    "changedBy":      { "type": "string" },
+    "at":             { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

@@ -23,5 +23,8 @@
   "chat.message.starred":         "./chat.message.starred.json",
   "chat.message.unstarred":       "./chat.message.unstarred.json",
   "chat.message.reaction.added":   "./chat.message.reaction.added.json",
-  "chat.message.reaction.removed": "./chat.message.reaction.removed.json"
+  "chat.message.reaction.removed": "./chat.message.reaction.removed.json",
+  "chat.conversation.role_changed": "./chat.conversation.role_changed.json",
+  "chat.conversation.invite_created": "./chat.conversation.invite_created.json",
+  "chat.conversation.member_joined": "./chat.conversation.member_joined.json"
 }

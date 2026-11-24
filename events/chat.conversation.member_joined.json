@@ -1,0 +1,13 @@
+{
+  "$id": "chat.conversation.member_joined",
+  "type": "object",
+  "required": ["conversationId", "userId", "joinedVia", "code", "at"],
+  "properties": {
+    "conversationId": { "type": "string" },
+    "userId":         { "type": "string" },
+    "joinedVia":      { "type": "string", "enum": ["invite"] },
+    "code":           { "type": "string" },
+    "at":             { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
