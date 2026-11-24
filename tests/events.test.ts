@@ -853,6 +853,85 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('voice.call.group_started', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'voice.call.group_started',
+        payload: {
+          callId: 'call-grp-1',
+          conversationId: 'conv-1',
+          hostId: 'usr-host',
+          roomName: 'room-grp-1',
+          mode: 'video',
+          startedAt: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.group_started');
+      if (result.type === 'voice.call.group_started') {
+        expect(result.payload.callId).toBe('call-grp-1');
+        expect(result.payload.mode).toBe('video');
+      }
+    });
+
+    it('throws on invalid mode', () => {
+      expect(() =>
+        parseEvent({
+          type: 'voice.call.group_started',
+          payload: {
+            callId: 'call-grp-1',
+            conversationId: 'conv-1',
+            hostId: 'usr-host',
+            roomName: 'room-grp-1',
+            mode: 'screen_only',
+            startedAt: '2026-11-24T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('voice.call.participant_joined', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'voice.call.participant_joined',
+        payload: {
+          callId: 'call-grp-1',
+          conversationId: 'conv-1',
+          userId: 'usr-3',
+          at: '2026-11-24T12:01:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.participant_joined');
+      if (result.type === 'voice.call.participant_joined') {
+        expect(result.payload.userId).toBe('usr-3');
+      }
+    });
+  });
+
+  describe('voice.call.participant_left', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'voice.call.participant_left',
+        payload: {
+          callId: 'call-grp-1',
+          conversationId: 'conv-1',
+          userId: 'usr-3',
+          at: '2026-11-24T12:05:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.participant_left');
+      if (result.type === 'voice.call.participant_left') {
+        expect(result.payload.userId).toBe('usr-3');
+      }
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

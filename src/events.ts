@@ -65,10 +65,20 @@ export type VoiceCallRejected = z.infer<typeof VoiceCallRejectedSchema>;
 export const VoiceCallEndedSchema = z
   .object({
     callId: z.string(),
-    callerId: z.string(),
-    calleeId: z.string(),
+    callerId: z.string().nullable().optional(),
+    calleeId: z.string().nullable().optional(),
+    conversationId: z.string().nullable().optional(),
     endedBy: z.string().nullable(),
-    reason: z.enum(['hangup', 'reject', 'missed', 'cancelled', 'error', 'livekit_closed']),
+    reason: z.enum([
+      'hangup',
+      'reject',
+      'missed',
+      'cancelled',
+      'error',
+      'livekit_closed',
+      'host_ended',
+      'all_left',
+    ]),
     at: z.string().datetime(),
   })
   .strict();
@@ -297,6 +307,38 @@ export const ChatConversationMemberJoinedSchema = z
   .strict();
 export type ChatConversationMemberJoined = z.infer<typeof ChatConversationMemberJoinedSchema>;
 
+export const VoiceCallGroupStartedSchema = z
+  .object({
+    callId: z.string(),
+    conversationId: z.string(),
+    hostId: z.string(),
+    roomName: z.string(),
+    mode: z.enum(['audio', 'video']),
+    startedAt: z.string().datetime(),
+  })
+  .strict();
+export type VoiceCallGroupStarted = z.infer<typeof VoiceCallGroupStartedSchema>;
+
+export const VoiceCallParticipantJoinedSchema = z
+  .object({
+    callId: z.string(),
+    conversationId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type VoiceCallParticipantJoined = z.infer<typeof VoiceCallParticipantJoinedSchema>;
+
+export const VoiceCallParticipantLeftSchema = z
+  .object({
+    callId: z.string(),
+    conversationId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type VoiceCallParticipantLeft = z.infer<typeof VoiceCallParticipantLeftSchema>;
+
 export const AuthUserRegisteredEventSchema = z.object({
   type: z.literal('auth.user.registered'),
   payload: AuthUserRegisteredSchema,
@@ -340,6 +382,21 @@ export const VoiceCallMissedEventSchema = z.object({
 export const VoiceCallCancelledEventSchema = z.object({
   type: z.literal('voice.call.cancelled'),
   payload: VoiceCallCancelledSchema,
+});
+
+export const VoiceCallGroupStartedEventSchema = z.object({
+  type: z.literal('voice.call.group_started'),
+  payload: VoiceCallGroupStartedSchema,
+});
+
+export const VoiceCallParticipantJoinedEventSchema = z.object({
+  type: z.literal('voice.call.participant_joined'),
+  payload: VoiceCallParticipantJoinedSchema,
+});
+
+export const VoiceCallParticipantLeftEventSchema = z.object({
+  type: z.literal('voice.call.participant_left'),
+  payload: VoiceCallParticipantLeftSchema,
 });
 
 export const CoreRelationshipBlockedEventSchema = z.object({
@@ -466,6 +523,9 @@ export const EventSchema = z.discriminatedUnion('type', [
   ChatConversationRoleChangedEventSchema,
   ChatConversationInviteCreatedEventSchema,
   ChatConversationMemberJoinedEventSchema,
+  VoiceCallGroupStartedEventSchema,
+  VoiceCallParticipantJoinedEventSchema,
+  VoiceCallParticipantLeftEventSchema,
 ]);
 
 export type NebronEvent =
@@ -478,6 +538,9 @@ export type NebronEvent =
   | { type: 'voice.call.ended'; payload: VoiceCallEnded }
   | { type: 'voice.call.missed'; payload: VoiceCallMissed }
   | { type: 'voice.call.cancelled'; payload: VoiceCallCancelled }
+  | { type: 'voice.call.group_started'; payload: VoiceCallGroupStarted }
+  | { type: 'voice.call.participant_joined'; payload: VoiceCallParticipantJoined }
+  | { type: 'voice.call.participant_left'; payload: VoiceCallParticipantLeft }
   | { type: 'core.relationship.blocked'; payload: CoreRelationshipBlocked }
   | { type: 'core.relationship.unblocked'; payload: CoreRelationshipUnblocked }
   | { type: 'core.relationship.muted'; payload: CoreRelationshipMuted }

@@ -26,5 +26,8 @@
   "chat.message.reaction.removed": "./chat.message.reaction.removed.json",
   "chat.conversation.role_changed": "./chat.conversation.role_changed.json",
   "chat.conversation.invite_created": "./chat.conversation.invite_created.json",
-  "chat.conversation.member_joined": "./chat.conversation.member_joined.json"
+  "chat.conversation.member_joined": "./chat.conversation.member_joined.json",
+  "voice.call.group_started":     "./voice.call.group_started.json",
+  "voice.call.participant_joined": "./voice.call.participant_joined.json",
+  "voice.call.participant_left":   "./voice.call.participant_left.json"
 }
