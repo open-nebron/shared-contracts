@@ -468,6 +468,47 @@ paths:
                         - muted
                 required:
                   - data
+  /relationships/blocked:
+    get:
+      tags:
+        - Relationships
+      description: Returns the list of users blocked by the caller
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of blocked users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  blocked:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId:
+                          type: string
+                        blockedAt:
+                          type: string
+                          format: date-time
+                        username:
+                          type: string
+                        name:
+                          type: string
+                          nullable: true
+                        avatarUrl:
+                          type: string
+                          nullable: true
+                      required:
+                        - userId
+                        - blockedAt
+                        - username
+                        - name
+                        - avatarUrl
+                required:
+                  - blocked
   /relationships/{userId}:
     get:
       tags:

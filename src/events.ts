@@ -193,6 +193,24 @@ export const ChatConversationDeletedSchema = z
   .strict();
 export type ChatConversationDeleted = z.infer<typeof ChatConversationDeletedSchema>;
 
+export const ChatConversationRequestAcceptedSchema = z
+  .object({
+    conversationId: z.string(),
+    acceptedBy: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type ChatConversationRequestAccepted = z.infer<typeof ChatConversationRequestAcceptedSchema>;
+
+export const ChatConversationRequestRejectedSchema = z
+  .object({
+    conversationId: z.string(),
+    rejectedBy: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type ChatConversationRequestRejected = z.infer<typeof ChatConversationRequestRejectedSchema>;
+
 export const AuthUserRegisteredEventSchema = z.object({
   type: z.literal('auth.user.registered'),
   payload: AuthUserRegisteredSchema,
@@ -283,6 +301,16 @@ export const ChatConversationDeletedEventSchema = z.object({
   payload: ChatConversationDeletedSchema,
 });
 
+export const ChatConversationRequestAcceptedEventSchema = z.object({
+  type: z.literal('chat.conversation.request_accepted'),
+  payload: ChatConversationRequestAcceptedSchema,
+});
+
+export const ChatConversationRequestRejectedEventSchema = z.object({
+  type: z.literal('chat.conversation.request_rejected'),
+  payload: ChatConversationRequestRejectedSchema,
+});
+
 export const EventSchema = z.discriminatedUnion('type', [
   AuthUserRegisteredEventSchema,
   AuthSessionRevokedEventSchema,
@@ -302,6 +330,8 @@ export const EventSchema = z.discriminatedUnion('type', [
   ChatConversationMemberRemovedEventSchema,
   ChatConversationRenamedEventSchema,
   ChatConversationDeletedEventSchema,
+  ChatConversationRequestAcceptedEventSchema,
+  ChatConversationRequestRejectedEventSchema,
 ]);
 
 export type NebronEvent =
@@ -322,7 +352,9 @@ export type NebronEvent =
   | { type: 'chat.conversation.member_added'; payload: ChatConversationMemberAdded }
   | { type: 'chat.conversation.member_removed'; payload: ChatConversationMemberRemoved }
   | { type: 'chat.conversation.renamed'; payload: ChatConversationRenamed }
-  | { type: 'chat.conversation.deleted'; payload: ChatConversationDeleted };
+  | { type: 'chat.conversation.deleted'; payload: ChatConversationDeleted }
+  | { type: 'chat.conversation.request_accepted'; payload: ChatConversationRequestAccepted }
+  | { type: 'chat.conversation.request_rejected'; payload: ChatConversationRequestRejected };
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.

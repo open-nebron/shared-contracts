@@ -1,0 +1,11 @@
+{
+  "$id": "chat.conversation.request_accepted",
+  "type": "object",
+  "required": ["conversationId", "acceptedBy", "at"],
+  "properties": {
+    "conversationId": { "type": "string" },
+    "acceptedBy":     { "type": "string" },
+    "at":             { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

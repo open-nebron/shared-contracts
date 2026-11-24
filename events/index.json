@@ -16,5 +16,7 @@
   "chat.conversation.member_added": "./chat.conversation.member_added.json",
   "chat.conversation.member_removed": "./chat.conversation.member_removed.json",
   "chat.conversation.renamed":    "./chat.conversation.renamed.json",
-  "chat.conversation.deleted":    "./chat.conversation.deleted.json"
+  "chat.conversation.deleted":    "./chat.conversation.deleted.json",
+  "chat.conversation.request_accepted": "./chat.conversation.request_accepted.json",
+  "chat.conversation.request_rejected": "./chat.conversation.request_rejected.json"
 }

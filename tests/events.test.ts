@@ -523,6 +523,64 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('chat.conversation.request_accepted', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.request_accepted',
+        payload: {
+          conversationId: 'conv-123',
+          acceptedBy: 'usr-2',
+          at: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.request_accepted');
+      expect((result.payload as any).acceptedBy).toBe('usr-2');
+    });
+
+    it('throws on missing acceptedBy', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.conversation.request_accepted',
+          payload: {
+            conversationId: 'conv-123',
+            at: '2026-11-24T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.conversation.request_rejected', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.request_rejected',
+        payload: {
+          conversationId: 'conv-123',
+          rejectedBy: 'usr-2',
+          at: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.request_rejected');
+      expect((result.payload as any).rejectedBy).toBe('usr-2');
+    });
+
+    it('throws on missing rejectedBy', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.conversation.request_rejected',
+          payload: {
+            conversationId: 'conv-123',
+            at: '2026-11-24T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>
