@@ -581,6 +581,101 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('chat.message.edited', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.message.edited',
+        payload: {
+          conversationId: 'conv-123',
+          messageId: 'msg-456',
+          senderId: 'usr-1',
+          body: 'Hello edited',
+          editedAt: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.message.edited');
+      if (result.type === 'chat.message.edited') {
+        expect(result.payload.body).toBe('Hello edited');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.message.edited',
+          payload: {
+            conversationId: 'conv-123',
+            messageId: 'msg-456',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.message.starred', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.message.starred',
+        payload: {
+          userId: 'usr-1',
+          conversationId: 'conv-123',
+          messageId: 'msg-456',
+          starredAt: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.message.starred');
+      if (result.type === 'chat.message.starred') {
+        expect(result.payload.userId).toBe('usr-1');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.message.starred',
+          payload: {
+            userId: 'usr-1',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.message.unstarred', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.message.unstarred',
+        payload: {
+          userId: 'usr-1',
+          conversationId: 'conv-123',
+          messageId: 'msg-456',
+          at: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.message.unstarred');
+      if (result.type === 'chat.message.unstarred') {
+        expect(result.payload.userId).toBe('usr-1');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.message.unstarred',
+          payload: {
+            userId: 'usr-1',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

@@ -211,6 +211,37 @@ export const ChatConversationRequestRejectedSchema = z
   .strict();
 export type ChatConversationRequestRejected = z.infer<typeof ChatConversationRequestRejectedSchema>;
 
+export const ChatMessageEditedSchema = z
+  .object({
+    conversationId: z.string(),
+    messageId: z.string(),
+    senderId: z.string(),
+    body: z.string(),
+    editedAt: z.string().datetime(),
+  })
+  .strict();
+export type ChatMessageEdited = z.infer<typeof ChatMessageEditedSchema>;
+
+export const ChatMessageStarredSchema = z
+  .object({
+    userId: z.string(),
+    conversationId: z.string(),
+    messageId: z.string(),
+    starredAt: z.string().datetime(),
+  })
+  .strict();
+export type ChatMessageStarred = z.infer<typeof ChatMessageStarredSchema>;
+
+export const ChatMessageUnstarredSchema = z
+  .object({
+    userId: z.string(),
+    conversationId: z.string(),
+    messageId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type ChatMessageUnstarred = z.infer<typeof ChatMessageUnstarredSchema>;
+
 export const AuthUserRegisteredEventSchema = z.object({
   type: z.literal('auth.user.registered'),
   payload: AuthUserRegisteredSchema,
@@ -311,6 +342,21 @@ export const ChatConversationRequestRejectedEventSchema = z.object({
   payload: ChatConversationRequestRejectedSchema,
 });
 
+export const ChatMessageEditedEventSchema = z.object({
+  type: z.literal('chat.message.edited'),
+  payload: ChatMessageEditedSchema,
+});
+
+export const ChatMessageStarredEventSchema = z.object({
+  type: z.literal('chat.message.starred'),
+  payload: ChatMessageStarredSchema,
+});
+
+export const ChatMessageUnstarredEventSchema = z.object({
+  type: z.literal('chat.message.unstarred'),
+  payload: ChatMessageUnstarredSchema,
+});
+
 export const EventSchema = z.discriminatedUnion('type', [
   AuthUserRegisteredEventSchema,
   AuthSessionRevokedEventSchema,
@@ -332,6 +378,9 @@ export const EventSchema = z.discriminatedUnion('type', [
   ChatConversationDeletedEventSchema,
   ChatConversationRequestAcceptedEventSchema,
   ChatConversationRequestRejectedEventSchema,
+  ChatMessageEditedEventSchema,
+  ChatMessageStarredEventSchema,
+  ChatMessageUnstarredEventSchema,
 ]);
 
 export type NebronEvent =
@@ -354,7 +403,10 @@ export type NebronEvent =
   | { type: 'chat.conversation.renamed'; payload: ChatConversationRenamed }
   | { type: 'chat.conversation.deleted'; payload: ChatConversationDeleted }
   | { type: 'chat.conversation.request_accepted'; payload: ChatConversationRequestAccepted }
-  | { type: 'chat.conversation.request_rejected'; payload: ChatConversationRequestRejected };
+  | { type: 'chat.conversation.request_rejected'; payload: ChatConversationRequestRejected }
+  | { type: 'chat.message.edited'; payload: ChatMessageEdited }
+  | { type: 'chat.message.starred'; payload: ChatMessageStarred }
+  | { type: 'chat.message.unstarred'; payload: ChatMessageUnstarred };
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.

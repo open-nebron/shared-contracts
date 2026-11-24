@@ -677,6 +677,171 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      tags:
+        - Messages
+      summary: Edit a message
+      description: Updates the body of a message (ownership check, not deleted, edit_count < 10).
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Message timeuuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - body
+              properties:
+                body:
+                  type: string
+                  minLength: 1
+                  maxLength: 4000
+      responses:
+        '200':
+          description: Message edited successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Message'
+        '400':
+          description: Invalid payload, deleted message, or edit limit reached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Forbidden (not member or not owner)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Conversation or message not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded (10/min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /conversations/{id}/messages/{messageId}/star:
+    post:
+      tags:
+        - Messages
+      summary: Star a message
+      description: Stars a message for the authenticated user (idempotent).
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Message starred
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not a member
+        '404':
+          description: Not found
+    delete:
+      tags:
+        - Messages
+      summary: Unstar a message
+      description: Unstars a message for the authenticated user (idempotent).
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Message unstarred
+        '401':
+          description: Unauthorized
+
+  /starred:
+    get:
+      tags:
+        - Messages
+      summary: List starred messages
+      description: Returns paginated starred messages for authenticated user.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 30
+        - in: query
+          name: before
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: List of starred messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                  hasMore:
+                    type: boolean
 
 components:
   securitySchemes:
