@@ -242,6 +242,27 @@ export const ChatMessageUnstarredSchema = z
   .strict();
 export type ChatMessageUnstarred = z.infer<typeof ChatMessageUnstarredSchema>;
 
+export const ChatMessageReactionAddedSchema = z
+  .object({
+    conversationId: z.string(),
+    messageId: z.string(),
+    emoji: z.string(),
+    userId: z.string(),
+    createdAt: z.string().datetime(),
+  })
+  .strict();
+export type ChatMessageReactionAdded = z.infer<typeof ChatMessageReactionAddedSchema>;
+
+export const ChatMessageReactionRemovedSchema = z
+  .object({
+    conversationId: z.string(),
+    messageId: z.string(),
+    emoji: z.string(),
+    userId: z.string(),
+  })
+  .strict();
+export type ChatMessageReactionRemoved = z.infer<typeof ChatMessageReactionRemovedSchema>;
+
 export const AuthUserRegisteredEventSchema = z.object({
   type: z.literal('auth.user.registered'),
   payload: AuthUserRegisteredSchema,
@@ -357,6 +378,16 @@ export const ChatMessageUnstarredEventSchema = z.object({
   payload: ChatMessageUnstarredSchema,
 });
 
+export const ChatMessageReactionAddedEventSchema = z.object({
+  type: z.literal('chat.message.reaction.added'),
+  payload: ChatMessageReactionAddedSchema,
+});
+
+export const ChatMessageReactionRemovedEventSchema = z.object({
+  type: z.literal('chat.message.reaction.removed'),
+  payload: ChatMessageReactionRemovedSchema,
+});
+
 export const EventSchema = z.discriminatedUnion('type', [
   AuthUserRegisteredEventSchema,
   AuthSessionRevokedEventSchema,
@@ -381,6 +412,8 @@ export const EventSchema = z.discriminatedUnion('type', [
   ChatMessageEditedEventSchema,
   ChatMessageStarredEventSchema,
   ChatMessageUnstarredEventSchema,
+  ChatMessageReactionAddedEventSchema,
+  ChatMessageReactionRemovedEventSchema,
 ]);
 
 export type NebronEvent =
@@ -406,7 +439,9 @@ export type NebronEvent =
   | { type: 'chat.conversation.request_rejected'; payload: ChatConversationRequestRejected }
   | { type: 'chat.message.edited'; payload: ChatMessageEdited }
   | { type: 'chat.message.starred'; payload: ChatMessageStarred }
-  | { type: 'chat.message.unstarred'; payload: ChatMessageUnstarred };
+  | { type: 'chat.message.unstarred'; payload: ChatMessageUnstarred }
+  | { type: 'chat.message.reaction.added'; payload: ChatMessageReactionAdded }
+  | { type: 'chat.message.reaction.removed'; payload: ChatMessageReactionRemoved };
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.

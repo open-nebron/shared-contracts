@@ -1,0 +1,25 @@
+{
+  "$id": "chat.message.reaction.removed",
+  "type": "object",
+  "required": [
+    "conversationId",
+    "messageId",
+    "emoji",
+    "userId"
+  ],
+  "properties": {
+    "conversationId": {
+      "type": "string"
+    },
+    "messageId": {
+      "type": "string"
+    },
+    "emoji": {
+      "type": "string"
+    },
+    "userId": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

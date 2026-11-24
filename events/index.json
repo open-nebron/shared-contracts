@@ -21,5 +21,7 @@
   "chat.conversation.request_rejected": "./chat.conversation.request_rejected.json",
   "chat.message.edited":          "./chat.message.edited.json",
   "chat.message.starred":         "./chat.message.starred.json",
-  "chat.message.unstarred":       "./chat.message.unstarred.json"
+  "chat.message.unstarred":       "./chat.message.unstarred.json",
+  "chat.message.reaction.added":   "./chat.message.reaction.added.json",
+  "chat.message.reaction.removed": "./chat.message.reaction.removed.json"
 }

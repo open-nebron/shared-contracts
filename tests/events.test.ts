@@ -676,6 +676,71 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('chat.message.reaction.added', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.message.reaction.added',
+        payload: {
+          conversationId: 'conv-123',
+          messageId: 'msg-456',
+          emoji: 'thumbs_up',
+          userId: 'usr-1',
+          createdAt: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.message.reaction.added');
+      if (result.type === 'chat.message.reaction.added') {
+        expect(result.payload.emoji).toBe('thumbs_up');
+        expect(result.payload.userId).toBe('usr-1');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.message.reaction.added',
+          payload: {
+            conversationId: 'conv-123',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.message.reaction.removed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.message.reaction.removed',
+        payload: {
+          conversationId: 'conv-123',
+          messageId: 'msg-456',
+          emoji: 'thumbs_up',
+          userId: 'usr-1',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.message.reaction.removed');
+      if (result.type === 'chat.message.reaction.removed') {
+        expect(result.payload.emoji).toBe('thumbs_up');
+        expect(result.payload.userId).toBe('usr-1');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.message.reaction.removed',
+          payload: {
+            conversationId: 'conv-123',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

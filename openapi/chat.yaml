@@ -809,6 +809,123 @@ paths:
         '401':
           description: Unauthorized
 
+  /conversations/{id}/messages/{messageId}/reactions/{emoji}:
+    put:
+      tags:
+        - Reactions
+      summary: Add reaction to message
+      description: Adds an emoji reaction to a message (idempotent).
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: emoji
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated reaction summaries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionsResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Message or conversation not found
+    delete:
+      tags:
+        - Reactions
+      summary: Remove reaction from message
+      description: Removes caller's emoji reaction from a message.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: emoji
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated reaction summaries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionsResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Message or conversation not found
+
+  /conversations/{id}/messages/{messageId}/reactions:
+    get:
+      tags:
+        - Reactions
+      summary: List reactions for message
+      description: Returns list of emoji reaction summaries with up to 50 userIds.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of reaction summaries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionsResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Message or conversation not found
+
   /starred:
     get:
       tags:
@@ -1192,6 +1309,10 @@ components:
           nullable: true
         deleted:
           type: boolean
+        reactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReactionSummary'
 
     MessageResponse:
       type: object
@@ -1224,3 +1345,35 @@ components:
           type: string
           description: timeuuid of the latest read message
           example: be15a7f0-e35d-11f1-abbd-a1b88e74a509
+
+    ReactionSummary:
+      type: object
+      required:
+        - emoji
+        - count
+        - userIds
+      properties:
+        emoji:
+          type: string
+        count:
+          type: integer
+        userIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    ReactionsResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - reactions
+          properties:
+            reactions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ReactionSummary'
