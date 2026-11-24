@@ -221,6 +221,14 @@ export const ChatConversationRequestRejectedSchema = z
   .strict();
 export type ChatConversationRequestRejected = z.infer<typeof ChatConversationRequestRejectedSchema>;
 
+export const ChatConversationRequestExpiredSchema = z
+  .object({
+    conversationId: z.string(),
+    expiredAt: z.string().datetime(),
+  })
+  .strict();
+export type ChatConversationRequestExpired = z.infer<typeof ChatConversationRequestExpiredSchema>;
+
 export const ChatMessageEditedSchema = z
   .object({
     conversationId: z.string(),
@@ -454,6 +462,11 @@ export const ChatConversationRequestRejectedEventSchema = z.object({
   payload: ChatConversationRequestRejectedSchema,
 });
 
+export const ChatConversationRequestExpiredEventSchema = z.object({
+  type: z.literal('chat.conversation.request_expired'),
+  payload: ChatConversationRequestExpiredSchema,
+});
+
 export const ChatMessageEditedEventSchema = z.object({
   type: z.literal('chat.message.edited'),
   payload: ChatMessageEditedSchema,
@@ -515,6 +528,7 @@ export const EventSchema = z.discriminatedUnion('type', [
   ChatConversationDeletedEventSchema,
   ChatConversationRequestAcceptedEventSchema,
   ChatConversationRequestRejectedEventSchema,
+  ChatConversationRequestExpiredEventSchema,
   ChatMessageEditedEventSchema,
   ChatMessageStarredEventSchema,
   ChatMessageUnstarredEventSchema,
@@ -552,6 +566,7 @@ export type NebronEvent =
   | { type: 'chat.conversation.deleted'; payload: ChatConversationDeleted }
   | { type: 'chat.conversation.request_accepted'; payload: ChatConversationRequestAccepted }
   | { type: 'chat.conversation.request_rejected'; payload: ChatConversationRequestRejected }
+  | { type: 'chat.conversation.request_expired'; payload: ChatConversationRequestExpired }
   | { type: 'chat.message.edited'; payload: ChatMessageEdited }
   | { type: 'chat.message.starred'; payload: ChatMessageStarred }
   | { type: 'chat.message.unstarred'; payload: ChatMessageUnstarred }
@@ -559,7 +574,10 @@ export type NebronEvent =
   | { type: 'chat.message.reaction.removed'; payload: ChatMessageReactionRemoved }
   | { type: 'chat.conversation.role_changed'; payload: ChatConversationRoleChanged }
   | { type: 'chat.conversation.invite_created'; payload: ChatConversationInviteCreated }
-  | { type: 'chat.conversation.member_joined'; payload: ChatConversationMemberJoined };
+  | { type: 'chat.conversation.member_joined'; payload: ChatConversationMemberJoined }
+  | { type: 'voice.call.group_started'; payload: VoiceCallGroupStarted }
+  | { type: 'voice.call.participant_joined'; payload: VoiceCallParticipantJoined }
+  | { type: 'voice.call.participant_left'; payload: VoiceCallParticipantLeft };
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.

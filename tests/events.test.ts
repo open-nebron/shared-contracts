@@ -581,6 +581,36 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('chat.conversation.request_expired', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.request_expired',
+        payload: {
+          conversationId: 'conv-123',
+          expiredAt: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.request_expired');
+      if (result.type === 'chat.conversation.request_expired') {
+        expect(result.payload.conversationId).toBe('conv-123');
+        expect(result.payload.expiredAt).toBe('2026-11-24T12:00:00.000Z');
+      }
+    });
+
+    it('throws on missing expiredAt', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.conversation.request_expired',
+          payload: {
+            conversationId: 'conv-123',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('chat.message.edited', () => {
     it('succeeds on valid payload', () => {
       const raw = {

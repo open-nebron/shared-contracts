@@ -19,6 +19,7 @@
   "chat.conversation.deleted":    "./chat.conversation.deleted.json",
   "chat.conversation.request_accepted": "./chat.conversation.request_accepted.json",
   "chat.conversation.request_rejected": "./chat.conversation.request_rejected.json",
+  "chat.conversation.request_expired":  "./chat.conversation.request_expired.json",
   "chat.message.edited":          "./chat.message.edited.json",
   "chat.message.starred":         "./chat.message.starred.json",
   "chat.message.unstarred":       "./chat.message.unstarred.json",
