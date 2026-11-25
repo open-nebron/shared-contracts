@@ -209,6 +209,28 @@ export const CorePostUnlikedSchema = z
   .strict();
 export type CorePostUnliked = z.infer<typeof CorePostUnlikedSchema>;
 
+export const CoreCommentCreatedSchema = z
+  .object({
+    commentId: z.string(),
+    postId: z.string(),
+    commentAuthorId: z.string(),
+    postAuthorId: z.string(),
+    body: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentCreated = z.infer<typeof CoreCommentCreatedSchema>;
+
+export const CoreCommentDeletedSchema = z
+  .object({
+    commentId: z.string(),
+    postId: z.string(),
+    commentAuthorId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentDeleted = z.infer<typeof CoreCommentDeletedSchema>;
+
 export const ChatConversationCreatedSchema = z
   .object({
     conversationId: z.string(),
@@ -595,6 +617,16 @@ export const CorePostUnlikedEventSchema = z.object({
   payload: CorePostUnlikedSchema,
 });
 
+export const CoreCommentCreatedEventSchema = z.object({
+  type: z.literal('core.comment.created'),
+  payload: CoreCommentCreatedSchema,
+});
+
+export const CoreCommentDeletedEventSchema = z.object({
+  type: z.literal('core.comment.deleted'),
+  payload: CoreCommentDeletedSchema,
+});
+
 export const EventSchema = z.discriminatedUnion('type', [
   AuthUserRegisteredEventSchema,
   AuthSessionRevokedEventSchema,
@@ -634,6 +666,8 @@ export const EventSchema = z.discriminatedUnion('type', [
   CorePostDeletedEventSchema,
   CorePostLikedEventSchema,
   CorePostUnlikedEventSchema,
+  CoreCommentCreatedEventSchema,
+  CoreCommentDeletedEventSchema,
 ]);
 
 export type NebronEvent =
@@ -677,7 +711,9 @@ export type NebronEvent =
   | { type: 'core.post.created'; payload: CorePostCreated }
   | { type: 'core.post.deleted'; payload: CorePostDeleted }
   | { type: 'core.post.liked'; payload: CorePostLiked }
-  | { type: 'core.post.unliked'; payload: CorePostUnliked };
+  | { type: 'core.post.unliked'; payload: CorePostUnliked }
+  | { type: 'core.comment.created'; payload: CoreCommentCreated }
+  | { type: 'core.comment.deleted'; payload: CoreCommentDeleted };
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.

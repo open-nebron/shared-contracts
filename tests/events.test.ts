@@ -1092,6 +1092,54 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('core.comment.created', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.comment.created',
+        payload: {
+          commentId: 'c-1',
+          postId: 'p-1',
+          commentAuthorId: 'u-1',
+          postAuthorId: 'u-2',
+          body: 'Great post!',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.comment.created');
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.comment.created',
+          payload: {
+            commentId: 'c-1',
+            postId: 'p-1',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.comment.deleted', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.comment.deleted',
+        payload: {
+          commentId: 'c-1',
+          postId: 'p-1',
+          commentAuthorId: 'u-1',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.comment.deleted');
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

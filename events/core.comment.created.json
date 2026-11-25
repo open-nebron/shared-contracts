@@ -1,0 +1,14 @@
+{
+  "$id": "core.comment.created",
+  "type": "object",
+  "required": ["commentId", "postId", "commentAuthorId", "postAuthorId", "body", "at"],
+  "properties": {
+    "commentId":       { "type": "string" },
+    "postId":          { "type": "string" },
+    "commentAuthorId": { "type": "string" },
+    "postAuthorId":    { "type": "string" },
+    "body":            { "type": "string" },
+    "at":              { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

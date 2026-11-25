@@ -36,5 +36,7 @@
   "core.post.created":            "./core.post.created.json",
   "core.post.deleted":            "./core.post.deleted.json",
   "core.post.liked":              "./core.post.liked.json",
-  "core.post.unliked":            "./core.post.unliked.json"
+  "core.post.unliked":            "./core.post.unliked.json",
+  "core.comment.created":         "./core.comment.created.json",
+  "core.comment.deleted":         "./core.comment.deleted.json"
 }
