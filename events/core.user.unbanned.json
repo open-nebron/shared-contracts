@@ -1,0 +1,11 @@
+{
+  "$id": "core.user.unbanned",
+  "type": "object",
+  "required": ["userId", "unbannedBy", "at"],
+  "properties": {
+    "userId":     { "type": "string" },
+    "unbannedBy": { "type": "string" },
+    "at":         { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

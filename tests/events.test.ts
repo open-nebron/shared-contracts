@@ -1170,6 +1170,150 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('core.report.created', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.report.created',
+        payload: {
+          reportId: 'rep_123',
+          reporterId: 'usr_reporter',
+          targetType: 'post',
+          targetId: 'post_456',
+          reason: 'spam',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.report.created');
+      if (result.type === 'core.report.created') {
+        expect(result.payload.reportId).toBe('rep_123');
+        expect(result.payload.reason).toBe('spam');
+      }
+    });
+
+    it('throws on missing required fields or invalid reason', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.report.created',
+          payload: {
+            reportId: 'rep_123',
+          },
+        })
+      ).toThrow();
+
+      expect(() =>
+        parseEvent({
+          type: 'core.report.created',
+          payload: {
+            reportId: 'rep_123',
+            reporterId: 'usr_reporter',
+            targetType: 'invalid_type',
+            targetId: 'post_456',
+            reason: 'spam',
+            at: '2026-11-25T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.report.resolved', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.report.resolved',
+        payload: {
+          reportId: 'rep_123',
+          resolvedBy: 'usr_admin',
+          action: 'delete_post',
+          at: '2026-11-25T12:30:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.report.resolved');
+      if (result.type === 'core.report.resolved') {
+        expect(result.payload.action).toBe('delete_post');
+      }
+    });
+
+    it('throws on invalid action', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.report.resolved',
+          payload: {
+            reportId: 'rep_123',
+            resolvedBy: 'usr_admin',
+            action: 'invalid_action',
+            at: '2026-11-25T12:30:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.user.banned', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.user.banned',
+        payload: {
+          userId: 'usr_bad',
+          bannedBy: 'usr_admin',
+          reason: 'Severe harassment',
+          at: '2026-11-25T12:45:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.user.banned');
+      if (result.type === 'core.user.banned') {
+        expect(result.payload.userId).toBe('usr_bad');
+        expect(result.payload.reason).toBe('Severe harassment');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.user.banned',
+          payload: {
+            userId: 'usr_bad',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.user.unbanned', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.user.unbanned',
+        payload: {
+          userId: 'usr_bad',
+          unbannedBy: 'usr_admin',
+          at: '2026-11-25T13:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.user.unbanned');
+      if (result.type === 'core.user.unbanned') {
+        expect(result.payload.userId).toBe('usr_bad');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.user.unbanned',
+          payload: {
+            userId: 'usr_bad',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

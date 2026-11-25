@@ -242,6 +242,47 @@ export const CorePostEditedSchema = z
   .strict();
 export type CorePostEdited = z.infer<typeof CorePostEditedSchema>;
 
+export const CoreReportCreatedSchema = z
+  .object({
+    reportId: z.string(),
+    reporterId: z.string(),
+    targetType: z.enum(['user', 'post', 'comment', 'message']),
+    targetId: z.string(),
+    reason: z.enum(['spam', 'harassment', 'hate', 'sexual', 'violence', 'self_harm', 'impersonation', 'other']),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreReportCreated = z.infer<typeof CoreReportCreatedSchema>;
+
+export const CoreReportResolvedSchema = z
+  .object({
+    reportId: z.string(),
+    resolvedBy: z.string(),
+    action: z.enum(['dismiss', 'delete_post', 'delete_comment', 'delete_message', 'ban_user', 'warn_user']),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreReportResolved = z.infer<typeof CoreReportResolvedSchema>;
+
+export const CoreUserBannedSchema = z
+  .object({
+    userId: z.string(),
+    bannedBy: z.string(),
+    reason: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreUserBanned = z.infer<typeof CoreUserBannedSchema>;
+
+export const CoreUserUnbannedSchema = z
+  .object({
+    userId: z.string(),
+    unbannedBy: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreUserUnbanned = z.infer<typeof CoreUserUnbannedSchema>;
+
 export const ChatConversationCreatedSchema = z
   .object({
     conversationId: z.string(),
@@ -643,6 +684,26 @@ export const CorePostEditedEventSchema = z.object({
   payload: CorePostEditedSchema,
 });
 
+export const CoreReportCreatedEventSchema = z.object({
+  type: z.literal('core.report.created'),
+  payload: CoreReportCreatedSchema,
+});
+
+export const CoreReportResolvedEventSchema = z.object({
+  type: z.literal('core.report.resolved'),
+  payload: CoreReportResolvedSchema,
+});
+
+export const CoreUserBannedEventSchema = z.object({
+  type: z.literal('core.user.banned'),
+  payload: CoreUserBannedSchema,
+});
+
+export const CoreUserUnbannedEventSchema = z.object({
+  type: z.literal('core.user.unbanned'),
+  payload: CoreUserUnbannedSchema,
+});
+
 export const EventSchema = z.discriminatedUnion('type', [
   AuthUserRegisteredEventSchema,
   AuthSessionRevokedEventSchema,
@@ -685,6 +746,10 @@ export const EventSchema = z.discriminatedUnion('type', [
   CoreCommentCreatedEventSchema,
   CoreCommentDeletedEventSchema,
   CorePostEditedEventSchema,
+  CoreReportCreatedEventSchema,
+  CoreReportResolvedEventSchema,
+  CoreUserBannedEventSchema,
+  CoreUserUnbannedEventSchema,
 ]);
 
 export type NebronEvent =
@@ -731,7 +796,11 @@ export type NebronEvent =
   | { type: 'core.post.unliked'; payload: CorePostUnliked }
   | { type: 'core.comment.created'; payload: CoreCommentCreated }
   | { type: 'core.comment.deleted'; payload: CoreCommentDeleted }
-  | { type: 'core.post.edited'; payload: CorePostEdited };
+  | { type: 'core.post.edited'; payload: CorePostEdited }
+  | { type: 'core.report.created'; payload: CoreReportCreated }
+  | { type: 'core.report.resolved'; payload: CoreReportResolved }
+  | { type: 'core.user.banned'; payload: CoreUserBanned }
+  | { type: 'core.user.unbanned'; payload: CoreUserUnbanned };
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.

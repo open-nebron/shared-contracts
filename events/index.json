@@ -39,5 +39,9 @@
   "core.post.unliked":            "./core.post.unliked.json",
   "core.comment.created":         "./core.comment.created.json",
   "core.comment.deleted":         "./core.comment.deleted.json",
-  "core.post.edited":             "./core.post.edited.json"
+  "core.post.edited":             "./core.post.edited.json",
+  "core.report.created":          "./core.report.created.json",
+  "core.report.resolved":         "./core.report.resolved.json",
+  "core.user.banned":             "./core.user.banned.json",
+  "core.user.unbanned":           "./core.user.unbanned.json"
 }

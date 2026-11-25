@@ -1,0 +1,12 @@
+{
+  "$id": "core.user.banned",
+  "type": "object",
+  "required": ["userId", "bannedBy", "reason", "at"],
+  "properties": {
+    "userId":   { "type": "string" },
+    "bannedBy": { "type": "string" },
+    "reason":   { "type": "string" },
+    "at":       { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

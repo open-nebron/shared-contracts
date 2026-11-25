@@ -1,0 +1,14 @@
+{
+  "$id": "core.report.created",
+  "type": "object",
+  "required": ["reportId", "reporterId", "targetType", "targetId", "reason", "at"],
+  "properties": {
+    "reportId":   { "type": "string" },
+    "reporterId": { "type": "string" },
+    "targetType": { "type": "string", "enum": ["user", "post", "comment", "message"] },
+    "targetId":   { "type": "string" },
+    "reason":     { "type": "string", "enum": ["spam", "harassment", "hate", "sexual", "violence", "self_harm", "impersonation", "other"] },
+    "at":         { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

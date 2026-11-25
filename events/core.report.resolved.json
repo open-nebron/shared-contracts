@@ -1,0 +1,12 @@
+{
+  "$id": "core.report.resolved",
+  "type": "object",
+  "required": ["reportId", "resolvedBy", "action", "at"],
+  "properties": {
+    "reportId":   { "type": "string" },
+    "resolvedBy": { "type": "string" },
+    "action":     { "type": "string", "enum": ["dismiss", "delete_post", "delete_comment", "delete_message", "ban_user", "warn_user"] },
+    "at":         { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
