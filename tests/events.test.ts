@@ -1140,6 +1140,36 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('core.post.edited', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.post.edited',
+        payload: {
+          postId: 'p-1',
+          authorId: 'u-1',
+          body: 'Updated body text',
+          hasImage: false,
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.post.edited');
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.post.edited',
+          payload: {
+            postId: 'p-1',
+            authorId: 'u-1',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>
