@@ -1314,6 +1314,55 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('auth.session.revoked_device', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'auth.session.revoked_device',
+        payload: {
+          userId: 'usr_123',
+          sessionId: 'sess_abc',
+          reason: 'user_revoked_device',
+          at: '2026-11-25T14:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('auth.session.revoked_device');
+      if (result.type === 'auth.session.revoked_device') {
+        expect(result.payload.userId).toBe('usr_123');
+        expect(result.payload.sessionId).toBe('sess_abc');
+        expect(result.payload.reason).toBe('user_revoked_device');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'auth.session.revoked_device',
+          payload: {
+            userId: 'usr_123',
+            sessionId: 'sess_abc',
+          },
+        })
+      ).toThrow();
+    });
+
+    it('throws on extra properties', () => {
+      expect(() =>
+        parseEvent({
+          type: 'auth.session.revoked_device',
+          payload: {
+            userId: 'usr_123',
+            sessionId: 'sess_abc',
+            reason: 'logout',
+            at: '2026-11-25T14:00:00.000Z',
+            extra: 123,
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

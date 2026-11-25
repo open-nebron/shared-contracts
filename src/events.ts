@@ -704,9 +704,25 @@ export const CoreUserUnbannedEventSchema = z.object({
   payload: CoreUserUnbannedSchema,
 });
 
+export const AuthSessionRevokedDeviceSchema = z
+  .object({
+    userId: z.string(),
+    sessionId: z.string(),
+    reason: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type AuthSessionRevokedDevice = z.infer<typeof AuthSessionRevokedDeviceSchema>;
+
+export const AuthSessionRevokedDeviceEventSchema = z.object({
+  type: z.literal('auth.session.revoked_device'),
+  payload: AuthSessionRevokedDeviceSchema,
+});
+
 export const EventSchema = z.discriminatedUnion('type', [
   AuthUserRegisteredEventSchema,
   AuthSessionRevokedEventSchema,
+  AuthSessionRevokedDeviceEventSchema,
   CoreProfileUpdatedEventSchema,
   VoiceCallRingingEventSchema,
   VoiceCallAcceptedEventSchema,
@@ -800,7 +816,8 @@ export type NebronEvent =
   | { type: 'core.report.created'; payload: CoreReportCreated }
   | { type: 'core.report.resolved'; payload: CoreReportResolved }
   | { type: 'core.user.banned'; payload: CoreUserBanned }
-  | { type: 'core.user.unbanned'; payload: CoreUserUnbanned };
+  | { type: 'core.user.unbanned'; payload: CoreUserUnbanned }
+  | { type: 'auth.session.revoked_device'; payload: AuthSessionRevokedDevice };
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.
