@@ -1,0 +1,11 @@
+{
+  "$id": "core.user.followed",
+  "type": "object",
+  "required": ["followerId", "followingId", "at"],
+  "properties": {
+    "followerId":  { "type": "string" },
+    "followingId": { "type": "string" },
+    "at":          { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

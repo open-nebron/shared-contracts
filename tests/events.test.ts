@@ -962,6 +962,136 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('core.user.followed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.user.followed',
+        payload: {
+          followerId: 'user-1',
+          followingId: 'user-2',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.user.followed');
+      if (result.type === 'core.user.followed') {
+        expect(result.payload.followerId).toBe('user-1');
+        expect(result.payload.followingId).toBe('user-2');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.user.followed',
+          payload: {
+            followerId: 'user-1',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.user.unfollowed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.user.unfollowed',
+        payload: {
+          followerId: 'user-1',
+          followingId: 'user-2',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.user.unfollowed');
+    });
+  });
+
+  describe('core.post.created', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.post.created',
+        payload: {
+          postId: 'post-123',
+          authorId: 'user-1',
+          body: 'Hello world post',
+          hasImage: false,
+          createdAt: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.post.created');
+      if (result.type === 'core.post.created') {
+        expect(result.payload.postId).toBe('post-123');
+        expect(result.payload.hasImage).toBe(false);
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.post.created',
+          payload: {
+            postId: 'post-123',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.post.deleted', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.post.deleted',
+        payload: {
+          postId: 'post-123',
+          authorId: 'user-1',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.post.deleted');
+    });
+  });
+
+  describe('core.post.liked', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.post.liked',
+        payload: {
+          postId: 'post-123',
+          authorId: 'user-1',
+          userId: 'user-2',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.post.liked');
+    });
+  });
+
+  describe('core.post.unliked', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.post.unliked',
+        payload: {
+          postId: 'post-123',
+          authorId: 'user-1',
+          userId: 'user-2',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.post.unliked');
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

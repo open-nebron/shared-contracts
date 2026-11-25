@@ -1,6 +1,6 @@
 {
   "name": "@nebron/contracts",
-  "version": "0.13.0",
+  "version": "1.0.0",
   "description": "Single source of truth for API schemas and event contracts across Nebron polyrepo",
   "type": "module",
   "main": "dist/index.js",

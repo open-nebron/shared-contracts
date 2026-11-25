@@ -151,6 +151,64 @@ export const CoreRelationshipUnmutedSchema = z
   .strict();
 export type CoreRelationshipUnmuted = z.infer<typeof CoreRelationshipUnmutedSchema>;
 
+export const CoreUserFollowedSchema = z
+  .object({
+    followerId: z.string(),
+    followingId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreUserFollowed = z.infer<typeof CoreUserFollowedSchema>;
+
+export const CoreUserUnfollowedSchema = z
+  .object({
+    followerId: z.string(),
+    followingId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreUserUnfollowed = z.infer<typeof CoreUserUnfollowedSchema>;
+
+export const CorePostCreatedSchema = z
+  .object({
+    postId: z.string(),
+    authorId: z.string(),
+    body: z.string(),
+    hasImage: z.boolean(),
+    createdAt: z.string().datetime(),
+  })
+  .strict();
+export type CorePostCreated = z.infer<typeof CorePostCreatedSchema>;
+
+export const CorePostDeletedSchema = z
+  .object({
+    postId: z.string(),
+    authorId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CorePostDeleted = z.infer<typeof CorePostDeletedSchema>;
+
+export const CorePostLikedSchema = z
+  .object({
+    postId: z.string(),
+    authorId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CorePostLiked = z.infer<typeof CorePostLikedSchema>;
+
+export const CorePostUnlikedSchema = z
+  .object({
+    postId: z.string(),
+    authorId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CorePostUnliked = z.infer<typeof CorePostUnlikedSchema>;
+
 export const ChatConversationCreatedSchema = z
   .object({
     conversationId: z.string(),
@@ -507,6 +565,36 @@ export const ChatConversationMemberJoinedEventSchema = z.object({
   payload: ChatConversationMemberJoinedSchema,
 });
 
+export const CoreUserFollowedEventSchema = z.object({
+  type: z.literal('core.user.followed'),
+  payload: CoreUserFollowedSchema,
+});
+
+export const CoreUserUnfollowedEventSchema = z.object({
+  type: z.literal('core.user.unfollowed'),
+  payload: CoreUserUnfollowedSchema,
+});
+
+export const CorePostCreatedEventSchema = z.object({
+  type: z.literal('core.post.created'),
+  payload: CorePostCreatedSchema,
+});
+
+export const CorePostDeletedEventSchema = z.object({
+  type: z.literal('core.post.deleted'),
+  payload: CorePostDeletedSchema,
+});
+
+export const CorePostLikedEventSchema = z.object({
+  type: z.literal('core.post.liked'),
+  payload: CorePostLikedSchema,
+});
+
+export const CorePostUnlikedEventSchema = z.object({
+  type: z.literal('core.post.unliked'),
+  payload: CorePostUnlikedSchema,
+});
+
 export const EventSchema = z.discriminatedUnion('type', [
   AuthUserRegisteredEventSchema,
   AuthSessionRevokedEventSchema,
@@ -540,6 +628,12 @@ export const EventSchema = z.discriminatedUnion('type', [
   VoiceCallGroupStartedEventSchema,
   VoiceCallParticipantJoinedEventSchema,
   VoiceCallParticipantLeftEventSchema,
+  CoreUserFollowedEventSchema,
+  CoreUserUnfollowedEventSchema,
+  CorePostCreatedEventSchema,
+  CorePostDeletedEventSchema,
+  CorePostLikedEventSchema,
+  CorePostUnlikedEventSchema,
 ]);
 
 export type NebronEvent =
@@ -577,7 +671,13 @@ export type NebronEvent =
   | { type: 'chat.conversation.member_joined'; payload: ChatConversationMemberJoined }
   | { type: 'voice.call.group_started'; payload: VoiceCallGroupStarted }
   | { type: 'voice.call.participant_joined'; payload: VoiceCallParticipantJoined }
-  | { type: 'voice.call.participant_left'; payload: VoiceCallParticipantLeft };
+  | { type: 'voice.call.participant_left'; payload: VoiceCallParticipantLeft }
+  | { type: 'core.user.followed'; payload: CoreUserFollowed }
+  | { type: 'core.user.unfollowed'; payload: CoreUserUnfollowed }
+  | { type: 'core.post.created'; payload: CorePostCreated }
+  | { type: 'core.post.deleted'; payload: CorePostDeleted }
+  | { type: 'core.post.liked'; payload: CorePostLiked }
+  | { type: 'core.post.unliked'; payload: CorePostUnliked };
 
 /**
  * Validates `{ type, payload }` against the corresponding event schema.

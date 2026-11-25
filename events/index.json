@@ -30,5 +30,11 @@
   "chat.conversation.member_joined": "./chat.conversation.member_joined.json",
   "voice.call.group_started":     "./voice.call.group_started.json",
   "voice.call.participant_joined": "./voice.call.participant_joined.json",
-  "voice.call.participant_left":   "./voice.call.participant_left.json"
+  "voice.call.participant_left":   "./voice.call.participant_left.json",
+  "core.user.followed":           "./core.user.followed.json",
+  "core.user.unfollowed":         "./core.user.unfollowed.json",
+  "core.post.created":            "./core.post.created.json",
+  "core.post.deleted":            "./core.post.deleted.json",
+  "core.post.liked":              "./core.post.liked.json",
+  "core.post.unliked":            "./core.post.unliked.json"
 }

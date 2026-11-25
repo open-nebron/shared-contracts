@@ -1,0 +1,11 @@
+{
+  "$id": "core.post.deleted",
+  "type": "object",
+  "required": ["postId", "authorId", "at"],
+  "properties": {
+    "postId":   { "type": "string" },
+    "authorId": { "type": "string" },
+    "at":       { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
