@@ -1,0 +1,14 @@
+{
+  "$id": "voice.call.group_started",
+  "type": "object",
+  "required": ["callId", "conversationId", "hostId", "roomName", "mode", "startedAt"],
+  "properties": {
+    "callId":         { "type": "string" },
+    "conversationId": { "type": "string" },
+    "hostId":         { "type": "string" },
+    "roomName":       { "type": "string" },
+    "mode":           { "type": "string", "enum": ["audio", "video"] },
+    "startedAt":      { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

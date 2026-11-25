@@ -1,0 +1,13 @@
+{
+  "$id": "chat.conversation.invite_created",
+  "type": "object",
+  "required": ["conversationId", "code", "createdBy"],
+  "properties": {
+    "conversationId": { "type": "string" },
+    "code":           { "type": "string" },
+    "createdBy":      { "type": "string" },
+    "expiresAt":      { "type": ["string", "null"] },
+    "maxUses":        { "type": ["integer", "null"] }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,12 @@
+{
+  "$id": "core.post.liked",
+  "type": "object",
+  "required": ["postId", "authorId", "userId", "at"],
+  "properties": {
+    "postId":   { "type": "string" },
+    "authorId": { "type": "string" },
+    "userId":   { "type": "string" },
+    "at":       { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

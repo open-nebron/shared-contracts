@@ -1,0 +1,10 @@
+{
+  "$id": "chat.conversation.request_expired",
+  "type": "object",
+  "required": ["conversationId", "expiredAt"],
+  "properties": {
+    "conversationId": { "type": "string" },
+    "expiredAt":      { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

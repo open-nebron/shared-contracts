@@ -1,0 +1,13 @@
+{
+  "$id": "core.post.created",
+  "type": "object",
+  "required": ["postId", "authorId", "body", "hasImage", "createdAt"],
+  "properties": {
+    "postId":    { "type": "string" },
+    "authorId":  { "type": "string" },
+    "body":      { "type": "string" },
+    "hasImage":  { "type": "boolean" },
+    "createdAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

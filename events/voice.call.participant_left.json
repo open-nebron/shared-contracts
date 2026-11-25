@@ -1,0 +1,12 @@
+{
+  "$id": "voice.call.participant_left",
+  "type": "object",
+  "required": ["callId", "conversationId", "userId", "at"],
+  "properties": {
+    "callId":         { "type": "string" },
+    "conversationId": { "type": "string" },
+    "userId":         { "type": "string" },
+    "at":             { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

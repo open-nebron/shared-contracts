@@ -1,0 +1,30 @@
+{
+  "$id": "chat.message.edited",
+  "type": "object",
+  "required": [
+    "conversationId",
+    "messageId",
+    "senderId",
+    "body",
+    "editedAt"
+  ],
+  "properties": {
+    "conversationId": {
+      "type": "string"
+    },
+    "messageId": {
+      "type": "string"
+    },
+    "senderId": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "editedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

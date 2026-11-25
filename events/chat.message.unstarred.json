@@ -1,0 +1,26 @@
+{
+  "$id": "chat.message.unstarred",
+  "type": "object",
+  "required": [
+    "userId",
+    "conversationId",
+    "messageId",
+    "at"
+  ],
+  "properties": {
+    "userId": {
+      "type": "string"
+    },
+    "conversationId": {
+      "type": "string"
+    },
+    "messageId": {
+      "type": "string"
+    },
+    "at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

@@ -581,6 +581,595 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('chat.conversation.request_expired', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.request_expired',
+        payload: {
+          conversationId: 'conv-123',
+          expiredAt: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.request_expired');
+      if (result.type === 'chat.conversation.request_expired') {
+        expect(result.payload.conversationId).toBe('conv-123');
+        expect(result.payload.expiredAt).toBe('2026-11-24T12:00:00.000Z');
+      }
+    });
+
+    it('throws on missing expiredAt', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.conversation.request_expired',
+          payload: {
+            conversationId: 'conv-123',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.message.edited', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.message.edited',
+        payload: {
+          conversationId: 'conv-123',
+          messageId: 'msg-456',
+          senderId: 'usr-1',
+          body: 'Hello edited',
+          editedAt: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.message.edited');
+      if (result.type === 'chat.message.edited') {
+        expect(result.payload.body).toBe('Hello edited');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.message.edited',
+          payload: {
+            conversationId: 'conv-123',
+            messageId: 'msg-456',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.message.starred', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.message.starred',
+        payload: {
+          userId: 'usr-1',
+          conversationId: 'conv-123',
+          messageId: 'msg-456',
+          starredAt: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.message.starred');
+      if (result.type === 'chat.message.starred') {
+        expect(result.payload.userId).toBe('usr-1');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.message.starred',
+          payload: {
+            userId: 'usr-1',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.message.unstarred', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.message.unstarred',
+        payload: {
+          userId: 'usr-1',
+          conversationId: 'conv-123',
+          messageId: 'msg-456',
+          at: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.message.unstarred');
+      if (result.type === 'chat.message.unstarred') {
+        expect(result.payload.userId).toBe('usr-1');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.message.unstarred',
+          payload: {
+            userId: 'usr-1',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.message.reaction.added', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.message.reaction.added',
+        payload: {
+          conversationId: 'conv-123',
+          messageId: 'msg-456',
+          emoji: 'thumbs_up',
+          userId: 'usr-1',
+          createdAt: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.message.reaction.added');
+      if (result.type === 'chat.message.reaction.added') {
+        expect(result.payload.emoji).toBe('thumbs_up');
+        expect(result.payload.userId).toBe('usr-1');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.message.reaction.added',
+          payload: {
+            conversationId: 'conv-123',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.message.reaction.removed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.message.reaction.removed',
+        payload: {
+          conversationId: 'conv-123',
+          messageId: 'msg-456',
+          emoji: 'thumbs_up',
+          userId: 'usr-1',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.message.reaction.removed');
+      if (result.type === 'chat.message.reaction.removed') {
+        expect(result.payload.emoji).toBe('thumbs_up');
+        expect(result.payload.userId).toBe('usr-1');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.message.reaction.removed',
+          payload: {
+            conversationId: 'conv-123',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.conversation.role_changed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.role_changed',
+        payload: {
+          conversationId: 'conv-123',
+          userId: 'usr-1',
+          oldRole: 'member',
+          newRole: 'admin',
+          changedBy: 'usr-owner',
+          at: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.role_changed');
+      if (result.type === 'chat.conversation.role_changed') {
+        expect(result.payload.newRole).toBe('admin');
+        expect(result.payload.changedBy).toBe('usr-owner');
+      }
+    });
+
+    it('throws on invalid role', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.conversation.role_changed',
+          payload: {
+            conversationId: 'conv-123',
+            userId: 'usr-1',
+            oldRole: 'member',
+            newRole: 'superadmin',
+            changedBy: 'usr-owner',
+            at: '2026-11-24T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('chat.conversation.invite_created', () => {
+    it('succeeds on valid payload with optional fields', () => {
+      const raw = {
+        type: 'chat.conversation.invite_created',
+        payload: {
+          conversationId: 'conv-123',
+          code: 'inv-abc',
+          createdBy: 'usr-admin',
+          expiresAt: '2026-11-25T12:00:00.000Z',
+          maxUses: 10,
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.invite_created');
+      if (result.type === 'chat.conversation.invite_created') {
+        expect(result.payload.code).toBe('inv-abc');
+        expect(result.payload.maxUses).toBe(10);
+      }
+    });
+
+    it('succeeds on minimal payload (null/omitted optional fields)', () => {
+      const raw = {
+        type: 'chat.conversation.invite_created',
+        payload: {
+          conversationId: 'conv-123',
+          code: 'inv-xyz',
+          createdBy: 'usr-admin',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.invite_created');
+    });
+  });
+
+  describe('chat.conversation.member_joined', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'chat.conversation.member_joined',
+        payload: {
+          conversationId: 'conv-123',
+          userId: 'usr-2',
+          joinedVia: 'invite',
+          code: 'inv-abc',
+          at: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('chat.conversation.member_joined');
+      if (result.type === 'chat.conversation.member_joined') {
+        expect(result.payload.code).toBe('inv-abc');
+        expect(result.payload.joinedVia).toBe('invite');
+      }
+    });
+
+    it('throws on invalid joinedVia', () => {
+      expect(() =>
+        parseEvent({
+          type: 'chat.conversation.member_joined',
+          payload: {
+            conversationId: 'conv-123',
+            userId: 'usr-2',
+            joinedVia: 'direct_add',
+            code: 'inv-abc',
+            at: '2026-11-24T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('voice.call.group_started', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'voice.call.group_started',
+        payload: {
+          callId: 'call-grp-1',
+          conversationId: 'conv-1',
+          hostId: 'usr-host',
+          roomName: 'room-grp-1',
+          mode: 'video',
+          startedAt: '2026-11-24T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.group_started');
+      if (result.type === 'voice.call.group_started') {
+        expect(result.payload.callId).toBe('call-grp-1');
+        expect(result.payload.mode).toBe('video');
+      }
+    });
+
+    it('throws on invalid mode', () => {
+      expect(() =>
+        parseEvent({
+          type: 'voice.call.group_started',
+          payload: {
+            callId: 'call-grp-1',
+            conversationId: 'conv-1',
+            hostId: 'usr-host',
+            roomName: 'room-grp-1',
+            mode: 'screen_only',
+            startedAt: '2026-11-24T12:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('voice.call.participant_joined', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'voice.call.participant_joined',
+        payload: {
+          callId: 'call-grp-1',
+          conversationId: 'conv-1',
+          userId: 'usr-3',
+          at: '2026-11-24T12:01:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.participant_joined');
+      if (result.type === 'voice.call.participant_joined') {
+        expect(result.payload.userId).toBe('usr-3');
+      }
+    });
+  });
+
+  describe('voice.call.participant_left', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'voice.call.participant_left',
+        payload: {
+          callId: 'call-grp-1',
+          conversationId: 'conv-1',
+          userId: 'usr-3',
+          at: '2026-11-24T12:05:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('voice.call.participant_left');
+      if (result.type === 'voice.call.participant_left') {
+        expect(result.payload.userId).toBe('usr-3');
+      }
+    });
+  });
+
+  describe('core.user.followed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.user.followed',
+        payload: {
+          followerId: 'user-1',
+          followingId: 'user-2',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.user.followed');
+      if (result.type === 'core.user.followed') {
+        expect(result.payload.followerId).toBe('user-1');
+        expect(result.payload.followingId).toBe('user-2');
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.user.followed',
+          payload: {
+            followerId: 'user-1',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.user.unfollowed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.user.unfollowed',
+        payload: {
+          followerId: 'user-1',
+          followingId: 'user-2',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.user.unfollowed');
+    });
+  });
+
+  describe('core.post.created', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.post.created',
+        payload: {
+          postId: 'post-123',
+          authorId: 'user-1',
+          body: 'Hello world post',
+          hasImage: false,
+          createdAt: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.post.created');
+      if (result.type === 'core.post.created') {
+        expect(result.payload.postId).toBe('post-123');
+        expect(result.payload.hasImage).toBe(false);
+      }
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.post.created',
+          payload: {
+            postId: 'post-123',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.post.deleted', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.post.deleted',
+        payload: {
+          postId: 'post-123',
+          authorId: 'user-1',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.post.deleted');
+    });
+  });
+
+  describe('core.post.liked', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.post.liked',
+        payload: {
+          postId: 'post-123',
+          authorId: 'user-1',
+          userId: 'user-2',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.post.liked');
+    });
+  });
+
+  describe('core.post.unliked', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.post.unliked',
+        payload: {
+          postId: 'post-123',
+          authorId: 'user-1',
+          userId: 'user-2',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.post.unliked');
+    });
+  });
+
+  describe('core.comment.created', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.comment.created',
+        payload: {
+          commentId: 'c-1',
+          postId: 'p-1',
+          commentAuthorId: 'u-1',
+          postAuthorId: 'u-2',
+          body: 'Great post!',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.comment.created');
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.comment.created',
+          payload: {
+            commentId: 'c-1',
+            postId: 'p-1',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.comment.deleted', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.comment.deleted',
+        payload: {
+          commentId: 'c-1',
+          postId: 'p-1',
+          commentAuthorId: 'u-1',
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.comment.deleted');
+    });
+  });
+
+  describe('core.post.edited', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.post.edited',
+        payload: {
+          postId: 'p-1',
+          authorId: 'u-1',
+          body: 'Updated body text',
+          hasImage: false,
+          at: '2026-11-25T12:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.post.edited');
+    });
+
+    it('throws on missing required fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.post.edited',
+          payload: {
+            postId: 'p-1',
+            authorId: 'u-1',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

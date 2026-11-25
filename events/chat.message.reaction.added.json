@@ -1,0 +1,30 @@
+{
+  "$id": "chat.message.reaction.added",
+  "type": "object",
+  "required": [
+    "conversationId",
+    "messageId",
+    "emoji",
+    "userId",
+    "createdAt"
+  ],
+  "properties": {
+    "conversationId": {
+      "type": "string"
+    },
+    "messageId": {
+      "type": "string"
+    },
+    "emoji": {
+      "type": "string"
+    },
+    "userId": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

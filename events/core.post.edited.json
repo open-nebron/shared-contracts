@@ -1,0 +1,13 @@
+{
+  "$id": "core.post.edited",
+  "type": "object",
+  "required": ["postId", "authorId", "body", "hasImage", "at"],
+  "properties": {
+    "postId":    { "type": "string" },
+    "authorId":  { "type": "string" },
+    "body":      { "type": "string" },
+    "hasImage":  { "type": "boolean" },
+    "at":        { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
