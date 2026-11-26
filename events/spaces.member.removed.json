@@ -1,0 +1,12 @@
+{
+  "$id": "spaces.member.removed",
+  "type": "object",
+  "required": ["spaceId", "userId", "removedBy", "at"],
+  "properties": {
+    "spaceId":   { "type": "string" },
+    "userId":    { "type": "string" },
+    "removedBy": { "type": "string" },
+    "at":        { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

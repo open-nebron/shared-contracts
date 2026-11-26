@@ -1,0 +1,13 @@
+{
+  "$id": "spaces.channel.created",
+  "type": "object",
+  "required": ["spaceId", "channelId", "kind", "name", "at"],
+  "properties": {
+    "spaceId":   { "type": "string" },
+    "channelId": { "type": "string" },
+    "kind":      { "type": "string", "enum": ["text", "voice"] },
+    "name":      { "type": "string" },
+    "at":        { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

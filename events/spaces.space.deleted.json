@@ -1,0 +1,11 @@
+{
+  "$id": "spaces.space.deleted",
+  "type": "object",
+  "required": ["spaceId", "by", "at"],
+  "properties": {
+    "spaceId": { "type": "string" },
+    "by":      { "type": "string" },
+    "at":      { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

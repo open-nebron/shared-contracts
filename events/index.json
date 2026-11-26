@@ -50,5 +50,16 @@
   "core.reel.liked":              "./core.reel.liked.json",
   "core.reel.unliked":            "./core.reel.unliked.json",
   "core.reel.viewed":             "./core.reel.viewed.json",
-  "auth.session.revoked_device":   "./auth.session.revoked_device.json"
+  "auth.session.revoked_device":   "./auth.session.revoked_device.json",
+  "spaces.space.created":          "./spaces.space.created.json",
+  "spaces.space.updated":          "./spaces.space.updated.json",
+  "spaces.space.deleted":          "./spaces.space.deleted.json",
+  "spaces.member.added":           "./spaces.member.added.json",
+  "spaces.member.removed":         "./spaces.member.removed.json",
+  "spaces.role.changed":           "./spaces.role.changed.json",
+  "spaces.member.roles.changed":   "./spaces.member.roles.changed.json",
+  "spaces.channel.created":        "./spaces.channel.created.json",
+  "spaces.channel.updated":        "./spaces.channel.updated.json",
+  "spaces.channel.deleted":        "./spaces.channel.deleted.json",
+  "spaces.channel.permissions.changed": "./spaces.channel.permissions.changed.json"
 }

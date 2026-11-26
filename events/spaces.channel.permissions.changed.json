@@ -1,0 +1,12 @@
+{
+  "$id": "spaces.channel.permissions.changed",
+  "type": "object",
+  "required": ["spaceId", "channelId", "by", "at"],
+  "properties": {
+    "spaceId":   { "type": "string" },
+    "channelId": { "type": "string" },
+    "by":        { "type": "string" },
+    "at":        { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

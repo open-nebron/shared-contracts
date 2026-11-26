@@ -1,0 +1,12 @@
+{
+  "$id": "spaces.member.added",
+  "type": "object",
+  "required": ["spaceId", "userId", "addedBy", "at"],
+  "properties": {
+    "spaceId": { "type": "string" },
+    "userId":  { "type": "string" },
+    "addedBy": { "type": "string" },
+    "at":      { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

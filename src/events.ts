@@ -772,6 +772,115 @@ export const CoreReelViewedSchema = z
   .strict();
 export type CoreReelViewed = z.infer<typeof CoreReelViewedSchema>;
 
+export const SpacesSpaceCreatedSchema = z
+  .object({
+    spaceId: z.string(),
+    ownerId: z.string(),
+    name: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesSpaceCreated = z.infer<typeof SpacesSpaceCreatedSchema>;
+
+export const SpacesSpaceUpdatedSchema = z
+  .object({
+    spaceId: z.string(),
+    by: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesSpaceUpdated = z.infer<typeof SpacesSpaceUpdatedSchema>;
+
+export const SpacesSpaceDeletedSchema = z
+  .object({
+    spaceId: z.string(),
+    by: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesSpaceDeleted = z.infer<typeof SpacesSpaceDeletedSchema>;
+
+export const SpacesMemberAddedSchema = z
+  .object({
+    spaceId: z.string(),
+    userId: z.string(),
+    addedBy: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesMemberAdded = z.infer<typeof SpacesMemberAddedSchema>;
+
+export const SpacesMemberRemovedSchema = z
+  .object({
+    spaceId: z.string(),
+    userId: z.string(),
+    removedBy: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesMemberRemoved = z.infer<typeof SpacesMemberRemovedSchema>;
+
+export const SpacesRoleChangedSchema = z
+  .object({
+    spaceId: z.string(),
+    roleId: z.string(),
+    by: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesRoleChanged = z.infer<typeof SpacesRoleChangedSchema>;
+
+export const SpacesMemberRolesChangedSchema = z
+  .object({
+    spaceId: z.string(),
+    userId: z.string(),
+    by: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesMemberRolesChanged = z.infer<typeof SpacesMemberRolesChangedSchema>;
+
+export const SpacesChannelCreatedSchema = z
+  .object({
+    spaceId: z.string(),
+    channelId: z.string(),
+    kind: z.enum(['text', 'voice']),
+    name: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesChannelCreated = z.infer<typeof SpacesChannelCreatedSchema>;
+
+export const SpacesChannelUpdatedSchema = z
+  .object({
+    spaceId: z.string(),
+    channelId: z.string(),
+    by: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesChannelUpdated = z.infer<typeof SpacesChannelUpdatedSchema>;
+
+export const SpacesChannelDeletedSchema = z
+  .object({
+    spaceId: z.string(),
+    channelId: z.string(),
+    by: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesChannelDeleted = z.infer<typeof SpacesChannelDeletedSchema>;
+
+export const SpacesChannelPermissionsChangedSchema = z
+  .object({
+    spaceId: z.string(),
+    channelId: z.string(),
+    by: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type SpacesChannelPermissionsChanged = z.infer<typeof SpacesChannelPermissionsChangedSchema>;
+
 export const AuthSessionRevokedDeviceEventSchema = z.object({
   type: z.literal('auth.session.revoked_device'),
   payload: AuthSessionRevokedDeviceSchema,
@@ -805,6 +914,61 @@ export const CoreReelUnlikedEventSchema = z.object({
 export const CoreReelViewedEventSchema = z.object({
   type: z.literal('core.reel.viewed'),
   payload: CoreReelViewedSchema,
+});
+
+export const SpacesSpaceCreatedEventSchema = z.object({
+  type: z.literal('spaces.space.created'),
+  payload: SpacesSpaceCreatedSchema,
+});
+
+export const SpacesSpaceUpdatedEventSchema = z.object({
+  type: z.literal('spaces.space.updated'),
+  payload: SpacesSpaceUpdatedSchema,
+});
+
+export const SpacesSpaceDeletedEventSchema = z.object({
+  type: z.literal('spaces.space.deleted'),
+  payload: SpacesSpaceDeletedSchema,
+});
+
+export const SpacesMemberAddedEventSchema = z.object({
+  type: z.literal('spaces.member.added'),
+  payload: SpacesMemberAddedSchema,
+});
+
+export const SpacesMemberRemovedEventSchema = z.object({
+  type: z.literal('spaces.member.removed'),
+  payload: SpacesMemberRemovedSchema,
+});
+
+export const SpacesRoleChangedEventSchema = z.object({
+  type: z.literal('spaces.role.changed'),
+  payload: SpacesRoleChangedSchema,
+});
+
+export const SpacesMemberRolesChangedEventSchema = z.object({
+  type: z.literal('spaces.member.roles.changed'),
+  payload: SpacesMemberRolesChangedSchema,
+});
+
+export const SpacesChannelCreatedEventSchema = z.object({
+  type: z.literal('spaces.channel.created'),
+  payload: SpacesChannelCreatedSchema,
+});
+
+export const SpacesChannelUpdatedEventSchema = z.object({
+  type: z.literal('spaces.channel.updated'),
+  payload: SpacesChannelUpdatedSchema,
+});
+
+export const SpacesChannelDeletedEventSchema = z.object({
+  type: z.literal('spaces.channel.deleted'),
+  payload: SpacesChannelDeletedSchema,
+});
+
+export const SpacesChannelPermissionsChangedEventSchema = z.object({
+  type: z.literal('spaces.channel.permissions.changed'),
+  payload: SpacesChannelPermissionsChangedSchema,
 });
 
 export const EventSchema = z.discriminatedUnion('type', [
@@ -860,6 +1024,17 @@ export const EventSchema = z.discriminatedUnion('type', [
   CoreReelLikedEventSchema,
   CoreReelUnlikedEventSchema,
   CoreReelViewedEventSchema,
+  SpacesSpaceCreatedEventSchema,
+  SpacesSpaceUpdatedEventSchema,
+  SpacesSpaceDeletedEventSchema,
+  SpacesMemberAddedEventSchema,
+  SpacesMemberRemovedEventSchema,
+  SpacesRoleChangedEventSchema,
+  SpacesMemberRolesChangedEventSchema,
+  SpacesChannelCreatedEventSchema,
+  SpacesChannelUpdatedEventSchema,
+  SpacesChannelDeletedEventSchema,
+  SpacesChannelPermissionsChangedEventSchema,
 ]);
 
 export type NebronEvent =
@@ -917,6 +1092,17 @@ export type NebronEvent =
   | { type: 'core.reel.liked'; payload: CoreReelLiked }
   | { type: 'core.reel.unliked'; payload: CoreReelUnliked }
   | { type: 'core.reel.viewed'; payload: CoreReelViewed }
+  | { type: 'spaces.space.created'; payload: SpacesSpaceCreated }
+  | { type: 'spaces.space.updated'; payload: SpacesSpaceUpdated }
+  | { type: 'spaces.space.deleted'; payload: SpacesSpaceDeleted }
+  | { type: 'spaces.member.added'; payload: SpacesMemberAdded }
+  | { type: 'spaces.member.removed'; payload: SpacesMemberRemoved }
+  | { type: 'spaces.role.changed'; payload: SpacesRoleChanged }
+  | { type: 'spaces.member.roles.changed'; payload: SpacesMemberRolesChanged }
+  | { type: 'spaces.channel.created'; payload: SpacesChannelCreated }
+  | { type: 'spaces.channel.updated'; payload: SpacesChannelUpdated }
+  | { type: 'spaces.channel.deleted'; payload: SpacesChannelDeleted }
+  | { type: 'spaces.channel.permissions.changed'; payload: SpacesChannelPermissionsChanged }
   | { type: 'auth.session.revoked_device'; payload: AuthSessionRevokedDevice };
 
 /**

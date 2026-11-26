@@ -1512,6 +1512,46 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('spaces.* events', () => {
+    const at = '2026-11-26T12:00:00.000Z';
+
+    it('validates all 11 spaces lifecycle, member, role, and channel events', () => {
+      const validEvents = [
+        { type: 'spaces.space.created', payload: { spaceId: 'sp1', ownerId: 'u1', name: 'Devs', at } },
+        { type: 'spaces.space.updated', payload: { spaceId: 'sp1', by: 'u1', at } },
+        { type: 'spaces.space.deleted', payload: { spaceId: 'sp1', by: 'u1', at } },
+        { type: 'spaces.member.added', payload: { spaceId: 'sp1', userId: 'u2', addedBy: 'u1', at } },
+        { type: 'spaces.member.removed', payload: { spaceId: 'sp1', userId: 'u2', removedBy: 'u1', at } },
+        { type: 'spaces.role.changed', payload: { spaceId: 'sp1', roleId: 'r1', by: 'u1', at } },
+        { type: 'spaces.member.roles.changed', payload: { spaceId: 'sp1', userId: 'u2', by: 'u1', at } },
+        { type: 'spaces.channel.created', payload: { spaceId: 'sp1', channelId: 'ch1', kind: 'text', name: 'general', at } },
+        { type: 'spaces.channel.updated', payload: { spaceId: 'sp1', channelId: 'ch1', by: 'u1', at } },
+        { type: 'spaces.channel.deleted', payload: { spaceId: 'sp1', channelId: 'ch1', by: 'u1', at } },
+        { type: 'spaces.channel.permissions.changed', payload: { spaceId: 'sp1', channelId: 'ch1', by: 'u1', at } },
+      ];
+
+      for (const evt of validEvents) {
+        const parsed = parseEvent(evt);
+        expect(parsed.type).toBe(evt.type);
+      }
+    });
+
+    it('throws on invalid spaces.channel.created kind or extra properties', () => {
+      expect(() =>
+        parseEvent({
+          type: 'spaces.channel.created',
+          payload: { spaceId: 'sp1', channelId: 'ch1', kind: 'video', name: 'cam', at },
+        })
+      ).toThrow();
+      expect(() =>
+        parseEvent({
+          type: 'spaces.space.updated',
+          payload: { spaceId: 'sp1', by: 'u1', at, extra: 1 },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

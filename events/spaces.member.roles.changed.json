@@ -1,0 +1,12 @@
+{
+  "$id": "spaces.member.roles.changed",
+  "type": "object",
+  "required": ["spaceId", "userId", "by", "at"],
+  "properties": {
+    "spaceId": { "type": "string" },
+    "userId":  { "type": "string" },
+    "by":      { "type": "string" },
+    "at":      { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
