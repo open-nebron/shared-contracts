@@ -1363,6 +1363,74 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('core.story.created', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.story.created',
+        payload: {
+          storyId: 'story_123',
+          authorId: 'usr_1',
+          mediaType: 'image',
+          at: '2026-11-26T10:00:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.story.created');
+      if (result.type === 'core.story.created') {
+        expect(result.payload.storyId).toBe('story_123');
+        expect(result.payload.mediaType).toBe('image');
+      }
+    });
+
+    it('throws on invalid mediaType or missing fields', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.story.created',
+          payload: {
+            storyId: 'story_123',
+            authorId: 'usr_1',
+            mediaType: 'audio',
+            at: '2026-11-26T10:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
+  describe('core.story.deleted', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.story.deleted',
+        payload: {
+          storyId: 'story_123',
+          authorId: 'usr_1',
+          at: '2026-11-26T10:05:00.000Z',
+        },
+      };
+
+      const result = parseEvent(raw);
+      expect(result.type).toBe('core.story.deleted');
+      if (result.type === 'core.story.deleted') {
+        expect(result.payload.storyId).toBe('story_123');
+      }
+    });
+
+    it('throws on extra properties', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.story.deleted',
+          payload: {
+            storyId: 'story_123',
+            authorId: 'usr_1',
+            at: '2026-11-26T10:05:00.000Z',
+            extra: true,
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

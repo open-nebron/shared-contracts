@@ -1,0 +1,11 @@
+{
+  "$id": "core.story.deleted",
+  "type": "object",
+  "required": ["storyId", "authorId", "at"],
+  "properties": {
+    "storyId":  { "type": "string" },
+    "authorId": { "type": "string" },
+    "at":       { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

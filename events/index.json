@@ -44,5 +44,7 @@
   "core.report.resolved":         "./core.report.resolved.json",
   "core.user.banned":             "./core.user.banned.json",
   "core.user.unbanned":           "./core.user.unbanned.json",
+  "core.story.created":           "./core.story.created.json",
+  "core.story.deleted":           "./core.story.deleted.json",
   "auth.session.revoked_device":   "./auth.session.revoked_device.json"
 }

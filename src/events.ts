@@ -714,9 +714,38 @@ export const AuthSessionRevokedDeviceSchema = z
   .strict();
 export type AuthSessionRevokedDevice = z.infer<typeof AuthSessionRevokedDeviceSchema>;
 
+export const CoreStoryCreatedSchema = z
+  .object({
+    storyId: z.string(),
+    authorId: z.string(),
+    mediaType: z.enum(['image', 'video']),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreStoryCreated = z.infer<typeof CoreStoryCreatedSchema>;
+
+export const CoreStoryDeletedSchema = z
+  .object({
+    storyId: z.string(),
+    authorId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreStoryDeleted = z.infer<typeof CoreStoryDeletedSchema>;
+
 export const AuthSessionRevokedDeviceEventSchema = z.object({
   type: z.literal('auth.session.revoked_device'),
   payload: AuthSessionRevokedDeviceSchema,
+});
+
+export const CoreStoryCreatedEventSchema = z.object({
+  type: z.literal('core.story.created'),
+  payload: CoreStoryCreatedSchema,
+});
+
+export const CoreStoryDeletedEventSchema = z.object({
+  type: z.literal('core.story.deleted'),
+  payload: CoreStoryDeletedSchema,
 });
 
 export const EventSchema = z.discriminatedUnion('type', [
@@ -766,6 +795,8 @@ export const EventSchema = z.discriminatedUnion('type', [
   CoreReportResolvedEventSchema,
   CoreUserBannedEventSchema,
   CoreUserUnbannedEventSchema,
+  CoreStoryCreatedEventSchema,
+  CoreStoryDeletedEventSchema,
 ]);
 
 export type NebronEvent =
@@ -817,6 +848,8 @@ export type NebronEvent =
   | { type: 'core.report.resolved'; payload: CoreReportResolved }
   | { type: 'core.user.banned'; payload: CoreUserBanned }
   | { type: 'core.user.unbanned'; payload: CoreUserUnbanned }
+  | { type: 'core.story.created'; payload: CoreStoryCreated }
+  | { type: 'core.story.deleted'; payload: CoreStoryDeleted }
   | { type: 'auth.session.revoked_device'; payload: AuthSessionRevokedDevice };
 
 /**

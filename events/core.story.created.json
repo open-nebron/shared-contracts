@@ -1,0 +1,12 @@
+{
+  "$id": "core.story.created",
+  "type": "object",
+  "required": ["storyId", "authorId", "mediaType", "at"],
+  "properties": {
+    "storyId":   { "type": "string" },
+    "authorId":  { "type": "string" },
+    "mediaType": { "type": "string", "enum": ["image", "video"] },
+    "at":        { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
