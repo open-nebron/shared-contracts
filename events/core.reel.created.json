@@ -1,0 +1,11 @@
+{
+  "$id": "core.reel.created",
+  "type": "object",
+  "required": ["reelId", "authorId", "at"],
+  "properties": {
+    "reelId":   { "type": "string" },
+    "authorId": { "type": "string" },
+    "at":       { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,12 @@
+{
+  "$id": "core.reel.viewed",
+  "type": "object",
+  "required": ["reelId", "authorId", "viewCountBatch", "at"],
+  "properties": {
+    "reelId":         { "type": "string" },
+    "authorId":       { "type": "string" },
+    "viewCountBatch": { "type": "integer", "minimum": 1 },
+    "at":             { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

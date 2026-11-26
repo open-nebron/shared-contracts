@@ -1431,6 +1431,87 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('core.reel.created', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.reel.created',
+        payload: {
+          reelId: 'reel_1',
+          authorId: 'usr_1',
+          at: '2026-11-26T10:00:00.000Z',
+        },
+      };
+      const res = parseEvent(raw);
+      expect(res.type).toBe('core.reel.created');
+    });
+
+    it('throws on missing fields', () => {
+      expect(() => parseEvent({ type: 'core.reel.created', payload: { reelId: 'reel_1' } })).toThrow();
+    });
+  });
+
+  describe('core.reel.liked', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.reel.liked',
+        payload: {
+          reelId: 'reel_1',
+          authorId: 'usr_1',
+          userId: 'usr_2',
+          at: '2026-11-26T10:00:00.000Z',
+        },
+      };
+      const res = parseEvent(raw);
+      expect(res.type).toBe('core.reel.liked');
+    });
+  });
+
+  describe('core.reel.unliked', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.reel.unliked',
+        payload: {
+          reelId: 'reel_1',
+          authorId: 'usr_1',
+          userId: 'usr_2',
+          at: '2026-11-26T10:00:00.000Z',
+        },
+      };
+      const res = parseEvent(raw);
+      expect(res.type).toBe('core.reel.unliked');
+    });
+  });
+
+  describe('core.reel.viewed', () => {
+    it('succeeds on valid payload', () => {
+      const raw = {
+        type: 'core.reel.viewed',
+        payload: {
+          reelId: 'reel_1',
+          authorId: 'usr_1',
+          viewCountBatch: 5,
+          at: '2026-11-26T10:00:00.000Z',
+        },
+      };
+      const res = parseEvent(raw);
+      expect(res.type).toBe('core.reel.viewed');
+    });
+
+    it('throws on invalid viewCountBatch <= 0', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.reel.viewed',
+          payload: {
+            reelId: 'reel_1',
+            authorId: 'usr_1',
+            viewCountBatch: 0,
+            at: '2026-11-26T10:00:00.000Z',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

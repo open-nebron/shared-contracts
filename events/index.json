@@ -46,5 +46,9 @@
   "core.user.unbanned":           "./core.user.unbanned.json",
   "core.story.created":           "./core.story.created.json",
   "core.story.deleted":           "./core.story.deleted.json",
+  "core.reel.created":            "./core.reel.created.json",
+  "core.reel.liked":              "./core.reel.liked.json",
+  "core.reel.unliked":            "./core.reel.unliked.json",
+  "core.reel.viewed":             "./core.reel.viewed.json",
   "auth.session.revoked_device":   "./auth.session.revoked_device.json"
 }

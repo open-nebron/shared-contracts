@@ -733,6 +733,45 @@ export const CoreStoryDeletedSchema = z
   .strict();
 export type CoreStoryDeleted = z.infer<typeof CoreStoryDeletedSchema>;
 
+export const CoreReelCreatedSchema = z
+  .object({
+    reelId: z.string(),
+    authorId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreReelCreated = z.infer<typeof CoreReelCreatedSchema>;
+
+export const CoreReelLikedSchema = z
+  .object({
+    reelId: z.string(),
+    authorId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreReelLiked = z.infer<typeof CoreReelLikedSchema>;
+
+export const CoreReelUnlikedSchema = z
+  .object({
+    reelId: z.string(),
+    authorId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreReelUnliked = z.infer<typeof CoreReelUnlikedSchema>;
+
+export const CoreReelViewedSchema = z
+  .object({
+    reelId: z.string(),
+    authorId: z.string(),
+    viewCountBatch: z.number().int().min(1),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreReelViewed = z.infer<typeof CoreReelViewedSchema>;
+
 export const AuthSessionRevokedDeviceEventSchema = z.object({
   type: z.literal('auth.session.revoked_device'),
   payload: AuthSessionRevokedDeviceSchema,
@@ -746,6 +785,26 @@ export const CoreStoryCreatedEventSchema = z.object({
 export const CoreStoryDeletedEventSchema = z.object({
   type: z.literal('core.story.deleted'),
   payload: CoreStoryDeletedSchema,
+});
+
+export const CoreReelCreatedEventSchema = z.object({
+  type: z.literal('core.reel.created'),
+  payload: CoreReelCreatedSchema,
+});
+
+export const CoreReelLikedEventSchema = z.object({
+  type: z.literal('core.reel.liked'),
+  payload: CoreReelLikedSchema,
+});
+
+export const CoreReelUnlikedEventSchema = z.object({
+  type: z.literal('core.reel.unliked'),
+  payload: CoreReelUnlikedSchema,
+});
+
+export const CoreReelViewedEventSchema = z.object({
+  type: z.literal('core.reel.viewed'),
+  payload: CoreReelViewedSchema,
 });
 
 export const EventSchema = z.discriminatedUnion('type', [
@@ -797,6 +856,10 @@ export const EventSchema = z.discriminatedUnion('type', [
   CoreUserUnbannedEventSchema,
   CoreStoryCreatedEventSchema,
   CoreStoryDeletedEventSchema,
+  CoreReelCreatedEventSchema,
+  CoreReelLikedEventSchema,
+  CoreReelUnlikedEventSchema,
+  CoreReelViewedEventSchema,
 ]);
 
 export type NebronEvent =
@@ -850,6 +913,10 @@ export type NebronEvent =
   | { type: 'core.user.unbanned'; payload: CoreUserUnbanned }
   | { type: 'core.story.created'; payload: CoreStoryCreated }
   | { type: 'core.story.deleted'; payload: CoreStoryDeleted }
+  | { type: 'core.reel.created'; payload: CoreReelCreated }
+  | { type: 'core.reel.liked'; payload: CoreReelLiked }
+  | { type: 'core.reel.unliked'; payload: CoreReelUnliked }
+  | { type: 'core.reel.viewed'; payload: CoreReelViewed }
   | { type: 'auth.session.revoked_device'; payload: AuthSessionRevokedDevice };
 
 /**

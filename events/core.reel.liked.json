@@ -1,0 +1,12 @@
+{
+  "$id": "core.reel.liked",
+  "type": "object",
+  "required": ["reelId", "authorId", "userId", "at"],
+  "properties": {
+    "reelId":   { "type": "string" },
+    "authorId": { "type": "string" },
+    "userId":   { "type": "string" },
+    "at":       { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
