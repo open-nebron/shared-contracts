@@ -316,6 +316,70 @@ export const CoreHashtagCreatedSchema = z
   .strict();
 export type CoreHashtagCreated = z.infer<typeof CoreHashtagCreatedSchema>;
 
+export const CorePostSavedSchema = z
+  .object({
+    postId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CorePostSaved = z.infer<typeof CorePostSavedSchema>;
+
+export const CorePostUnsavedSchema = z
+  .object({
+    postId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CorePostUnsaved = z.infer<typeof CorePostUnsavedSchema>;
+
+export const CoreReelSavedSchema = z
+  .object({
+    reelId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreReelSaved = z.infer<typeof CoreReelSavedSchema>;
+
+export const CoreReelUnsavedSchema = z
+  .object({
+    reelId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreReelUnsaved = z.infer<typeof CoreReelUnsavedSchema>;
+
+export const CoreCommentSavedSchema = z
+  .object({
+    commentId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentSaved = z.infer<typeof CoreCommentSavedSchema>;
+
+export const CoreCommentUnsavedSchema = z
+  .object({
+    commentId: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentUnsaved = z.infer<typeof CoreCommentUnsavedSchema>;
+
+export const CoreContentSharedSchema = z
+  .object({
+    contentType: z.enum(['post', 'reel', 'comment']),
+    contentId: z.string(),
+    byUserId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreContentShared = z.infer<typeof CoreContentSharedSchema>;
+
 export const CorePostEditedSchema = z
   .object({
     postId: z.string(),
@@ -804,6 +868,41 @@ export const CoreHashtagCreatedEventSchema = z.object({
   payload: CoreHashtagCreatedSchema,
 });
 
+export const CorePostSavedEventSchema = z.object({
+  type: z.literal('core.post.saved'),
+  payload: CorePostSavedSchema,
+});
+
+export const CorePostUnsavedEventSchema = z.object({
+  type: z.literal('core.post.unsaved'),
+  payload: CorePostUnsavedSchema,
+});
+
+export const CoreReelSavedEventSchema = z.object({
+  type: z.literal('core.reel.saved'),
+  payload: CoreReelSavedSchema,
+});
+
+export const CoreReelUnsavedEventSchema = z.object({
+  type: z.literal('core.reel.unsaved'),
+  payload: CoreReelUnsavedSchema,
+});
+
+export const CoreCommentSavedEventSchema = z.object({
+  type: z.literal('core.comment.saved'),
+  payload: CoreCommentSavedSchema,
+});
+
+export const CoreCommentUnsavedEventSchema = z.object({
+  type: z.literal('core.comment.unsaved'),
+  payload: CoreCommentUnsavedSchema,
+});
+
+export const CoreContentSharedEventSchema = z.object({
+  type: z.literal('core.content.shared'),
+  payload: CoreContentSharedSchema,
+});
+
 export const CorePostEditedEventSchema = z.object({
   type: z.literal('core.post.edited'),
   payload: CorePostEditedSchema,
@@ -1146,6 +1245,13 @@ export const EventSchema = z.discriminatedUnion('type', [
   CoreCommentUnpinnedEventSchema,
   CoreUserMentionedEventSchema,
   CoreHashtagCreatedEventSchema,
+  CorePostSavedEventSchema,
+  CorePostUnsavedEventSchema,
+  CoreReelSavedEventSchema,
+  CoreReelUnsavedEventSchema,
+  CoreCommentSavedEventSchema,
+  CoreCommentUnsavedEventSchema,
+  CoreContentSharedEventSchema,
   CorePostEditedEventSchema,
   CoreReportCreatedEventSchema,
   CoreReportResolvedEventSchema,
@@ -1222,6 +1328,13 @@ export type NebronEvent =
   | { type: 'core.comment.unpinned'; payload: CoreCommentUnpinned }
   | { type: 'core.user.mentioned'; payload: CoreUserMentioned }
   | { type: 'core.hashtag.created'; payload: CoreHashtagCreated }
+  | { type: 'core.post.saved'; payload: CorePostSaved }
+  | { type: 'core.post.unsaved'; payload: CorePostUnsaved }
+  | { type: 'core.reel.saved'; payload: CoreReelSaved }
+  | { type: 'core.reel.unsaved'; payload: CoreReelUnsaved }
+  | { type: 'core.comment.saved'; payload: CoreCommentSaved }
+  | { type: 'core.comment.unsaved'; payload: CoreCommentUnsaved }
+  | { type: 'core.content.shared'; payload: CoreContentShared }
   | { type: 'core.post.edited'; payload: CorePostEdited }
   | { type: 'core.report.created'; payload: CoreReportCreated }
   | { type: 'core.report.resolved'; payload: CoreReportResolved }

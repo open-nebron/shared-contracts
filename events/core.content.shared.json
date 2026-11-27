@@ -1,0 +1,12 @@
+{
+  "$id": "core.content.shared",
+  "type": "object",
+  "required": ["contentType", "contentId", "byUserId", "at"],
+  "properties": {
+    "contentType": { "type": "string", "enum": ["post", "reel", "comment"] },
+    "contentId":   { "type": "string" },
+    "byUserId":    { "type": "string" },
+    "at":          { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

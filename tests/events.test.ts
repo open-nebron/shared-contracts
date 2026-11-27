@@ -1690,6 +1690,77 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('V4-3 saves and share events', () => {
+    const at = '2026-11-27T12:00:00.000Z';
+
+    it('accepts core.{post,reel,comment}.{saved,unsaved} and core.content.shared payloads', () => {
+      expect(
+        parseEvent({
+          type: 'core.post.saved',
+          payload: { postId: 'p1', userId: 'u1', at },
+        }).type
+      ).toBe('core.post.saved');
+
+      expect(
+        parseEvent({
+          type: 'core.post.unsaved',
+          payload: { postId: 'p1', userId: 'u1', at },
+        }).type
+      ).toBe('core.post.unsaved');
+
+      expect(
+        parseEvent({
+          type: 'core.reel.saved',
+          payload: { reelId: 'r1', userId: 'u1', at },
+        }).type
+      ).toBe('core.reel.saved');
+
+      expect(
+        parseEvent({
+          type: 'core.reel.unsaved',
+          payload: { reelId: 'r1', userId: 'u1', at },
+        }).type
+      ).toBe('core.reel.unsaved');
+
+      expect(
+        parseEvent({
+          type: 'core.comment.saved',
+          payload: { commentId: 'c1', userId: 'u1', at },
+        }).type
+      ).toBe('core.comment.saved');
+
+      expect(
+        parseEvent({
+          type: 'core.comment.unsaved',
+          payload: { commentId: 'c1', userId: 'u1', at },
+        }).type
+      ).toBe('core.comment.unsaved');
+
+      expect(
+        parseEvent({
+          type: 'core.content.shared',
+          payload: { contentType: 'post', contentId: 'p1', byUserId: 'u1', at },
+        }).type
+      ).toBe('core.content.shared');
+    });
+
+    it('rejects invalid contentType or extra properties on V4-3 events', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.content.shared',
+          payload: { contentType: 'story', contentId: 's1', byUserId: 'u1', at },
+        })
+      ).toThrow();
+
+      expect(() =>
+        parseEvent({
+          type: 'core.post.saved',
+          payload: { postId: 'p1', userId: 'u1', at, extra: true },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

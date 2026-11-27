@@ -1,0 +1,11 @@
+{
+  "$id": "core.post.unsaved",
+  "type": "object",
+  "required": ["postId", "userId", "at"],
+  "properties": {
+    "postId": { "type": "string" },
+    "userId": { "type": "string" },
+    "at":     { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
