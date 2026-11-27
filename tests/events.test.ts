@@ -1552,6 +1552,74 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('core.comment.* V4-1 events', () => {
+    it('validates core.comment.replied, core.comment.liked, and core.comment.unliked', () => {
+      const replied = parseEvent({
+        type: 'core.comment.replied',
+        payload: {
+          commentId: 'c_2',
+          parentCommentId: 'c_1',
+          postId: 'p_1',
+          commentAuthorId: 'usr_2',
+          parentAuthorId: 'usr_1',
+          at: '2026-11-27T10:00:00.000Z',
+        },
+      });
+      expect(replied.type).toBe('core.comment.replied');
+
+      const liked = parseEvent({
+        type: 'core.comment.liked',
+        payload: {
+          commentId: 'c_1',
+          postId: 'p_1',
+          userId: 'usr_2',
+          commentAuthorId: 'usr_1',
+          at: '2026-11-27T10:00:00.000Z',
+        },
+      });
+      expect(liked.type).toBe('core.comment.liked');
+
+      const unliked = parseEvent({
+        type: 'core.comment.unliked',
+        payload: {
+          commentId: 'c_1',
+          postId: 'p_1',
+          userId: 'usr_2',
+          commentAuthorId: 'usr_1',
+          at: '2026-11-27T10:00:00.000Z',
+        },
+      });
+      expect(unliked.type).toBe('core.comment.unliked');
+    });
+
+    it('rejects extra fields or missing required fields on V4-1 comment events', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.comment.replied',
+          payload: {
+            commentId: 'c_2',
+            parentCommentId: 'c_1',
+            postId: 'p_1',
+            commentAuthorId: 'usr_2',
+            parentAuthorId: 'usr_1',
+            at: '2026-11-27T10:00:00.000Z',
+            extra: true,
+          },
+        })
+      ).toThrow();
+      expect(() =>
+        parseEvent({
+          type: 'core.comment.liked',
+          payload: {
+            commentId: 'c_1',
+            postId: 'p_1',
+            userId: 'usr_2',
+          },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

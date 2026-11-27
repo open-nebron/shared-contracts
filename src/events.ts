@@ -231,6 +231,40 @@ export const CoreCommentDeletedSchema = z
   .strict();
 export type CoreCommentDeleted = z.infer<typeof CoreCommentDeletedSchema>;
 
+export const CoreCommentRepliedSchema = z
+  .object({
+    commentId: z.string(),
+    parentCommentId: z.string(),
+    postId: z.string(),
+    commentAuthorId: z.string(),
+    parentAuthorId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentReplied = z.infer<typeof CoreCommentRepliedSchema>;
+
+export const CoreCommentLikedSchema = z
+  .object({
+    commentId: z.string(),
+    postId: z.string(),
+    userId: z.string(),
+    commentAuthorId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentLiked = z.infer<typeof CoreCommentLikedSchema>;
+
+export const CoreCommentUnlikedSchema = z
+  .object({
+    commentId: z.string(),
+    postId: z.string(),
+    userId: z.string(),
+    commentAuthorId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentUnliked = z.infer<typeof CoreCommentUnlikedSchema>;
+
 export const CorePostEditedSchema = z
   .object({
     postId: z.string(),
@@ -679,6 +713,21 @@ export const CoreCommentDeletedEventSchema = z.object({
   payload: CoreCommentDeletedSchema,
 });
 
+export const CoreCommentRepliedEventSchema = z.object({
+  type: z.literal('core.comment.replied'),
+  payload: CoreCommentRepliedSchema,
+});
+
+export const CoreCommentLikedEventSchema = z.object({
+  type: z.literal('core.comment.liked'),
+  payload: CoreCommentLikedSchema,
+});
+
+export const CoreCommentUnlikedEventSchema = z.object({
+  type: z.literal('core.comment.unliked'),
+  payload: CoreCommentUnlikedSchema,
+});
+
 export const CorePostEditedEventSchema = z.object({
   type: z.literal('core.post.edited'),
   payload: CorePostEditedSchema,
@@ -1013,6 +1062,9 @@ export const EventSchema = z.discriminatedUnion('type', [
   CorePostUnlikedEventSchema,
   CoreCommentCreatedEventSchema,
   CoreCommentDeletedEventSchema,
+  CoreCommentRepliedEventSchema,
+  CoreCommentLikedEventSchema,
+  CoreCommentUnlikedEventSchema,
   CorePostEditedEventSchema,
   CoreReportCreatedEventSchema,
   CoreReportResolvedEventSchema,
@@ -1081,6 +1133,9 @@ export type NebronEvent =
   | { type: 'core.post.unliked'; payload: CorePostUnliked }
   | { type: 'core.comment.created'; payload: CoreCommentCreated }
   | { type: 'core.comment.deleted'; payload: CoreCommentDeleted }
+  | { type: 'core.comment.replied'; payload: CoreCommentReplied }
+  | { type: 'core.comment.liked'; payload: CoreCommentLiked }
+  | { type: 'core.comment.unliked'; payload: CoreCommentUnliked }
   | { type: 'core.post.edited'; payload: CorePostEdited }
   | { type: 'core.report.created'; payload: CoreReportCreated }
   | { type: 'core.report.resolved'; payload: CoreReportResolved }
