@@ -1,0 +1,14 @@
+{
+  "$id": "core.user.mentioned",
+  "type": "object",
+  "required": ["userId", "byUserId", "contentType", "contentId", "context", "at"],
+  "properties": {
+    "userId":      { "type": "string" },
+    "byUserId":    { "type": "string" },
+    "contentType": { "type": "string", "enum": ["post", "comment", "reel"] },
+    "contentId":   { "type": "string" },
+    "context":     { "type": "string" },
+    "at":          { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,11 @@
+{
+  "$id": "core.hashtag.created",
+  "type": "object",
+  "required": ["tag", "postId", "at"],
+  "properties": {
+    "tag":    { "type": "string" },
+    "postId": { "type": "string" },
+    "at":     { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

@@ -265,6 +265,57 @@ export const CoreCommentUnlikedSchema = z
   .strict();
 export type CoreCommentUnliked = z.infer<typeof CoreCommentUnlikedSchema>;
 
+export const CoreCommentUpdatedSchema = z
+  .object({
+    commentId: z.string(),
+    postId: z.string(),
+    body: z.string(),
+    editedAt: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentUpdated = z.infer<typeof CoreCommentUpdatedSchema>;
+
+export const CoreCommentPinnedSchema = z
+  .object({
+    commentId: z.string(),
+    postId: z.string(),
+    by: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentPinned = z.infer<typeof CoreCommentPinnedSchema>;
+
+export const CoreCommentUnpinnedSchema = z
+  .object({
+    commentId: z.string(),
+    postId: z.string(),
+    by: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentUnpinned = z.infer<typeof CoreCommentUnpinnedSchema>;
+
+export const CoreUserMentionedSchema = z
+  .object({
+    userId: z.string(),
+    byUserId: z.string(),
+    contentType: z.enum(['post', 'comment', 'reel']),
+    contentId: z.string(),
+    context: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreUserMentioned = z.infer<typeof CoreUserMentionedSchema>;
+
+export const CoreHashtagCreatedSchema = z
+  .object({
+    tag: z.string(),
+    postId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreHashtagCreated = z.infer<typeof CoreHashtagCreatedSchema>;
+
 export const CorePostEditedSchema = z
   .object({
     postId: z.string(),
@@ -728,6 +779,31 @@ export const CoreCommentUnlikedEventSchema = z.object({
   payload: CoreCommentUnlikedSchema,
 });
 
+export const CoreCommentUpdatedEventSchema = z.object({
+  type: z.literal('core.comment.updated'),
+  payload: CoreCommentUpdatedSchema,
+});
+
+export const CoreCommentPinnedEventSchema = z.object({
+  type: z.literal('core.comment.pinned'),
+  payload: CoreCommentPinnedSchema,
+});
+
+export const CoreCommentUnpinnedEventSchema = z.object({
+  type: z.literal('core.comment.unpinned'),
+  payload: CoreCommentUnpinnedSchema,
+});
+
+export const CoreUserMentionedEventSchema = z.object({
+  type: z.literal('core.user.mentioned'),
+  payload: CoreUserMentionedSchema,
+});
+
+export const CoreHashtagCreatedEventSchema = z.object({
+  type: z.literal('core.hashtag.created'),
+  payload: CoreHashtagCreatedSchema,
+});
+
 export const CorePostEditedEventSchema = z.object({
   type: z.literal('core.post.edited'),
   payload: CorePostEditedSchema,
@@ -1065,6 +1141,11 @@ export const EventSchema = z.discriminatedUnion('type', [
   CoreCommentRepliedEventSchema,
   CoreCommentLikedEventSchema,
   CoreCommentUnlikedEventSchema,
+  CoreCommentUpdatedEventSchema,
+  CoreCommentPinnedEventSchema,
+  CoreCommentUnpinnedEventSchema,
+  CoreUserMentionedEventSchema,
+  CoreHashtagCreatedEventSchema,
   CorePostEditedEventSchema,
   CoreReportCreatedEventSchema,
   CoreReportResolvedEventSchema,
@@ -1136,6 +1217,11 @@ export type NebronEvent =
   | { type: 'core.comment.replied'; payload: CoreCommentReplied }
   | { type: 'core.comment.liked'; payload: CoreCommentLiked }
   | { type: 'core.comment.unliked'; payload: CoreCommentUnliked }
+  | { type: 'core.comment.updated'; payload: CoreCommentUpdated }
+  | { type: 'core.comment.pinned'; payload: CoreCommentPinned }
+  | { type: 'core.comment.unpinned'; payload: CoreCommentUnpinned }
+  | { type: 'core.user.mentioned'; payload: CoreUserMentioned }
+  | { type: 'core.hashtag.created'; payload: CoreHashtagCreated }
   | { type: 'core.post.edited'; payload: CorePostEdited }
   | { type: 'core.report.created'; payload: CoreReportCreated }
   | { type: 'core.report.resolved'; payload: CoreReportResolved }

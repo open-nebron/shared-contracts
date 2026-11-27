@@ -1,0 +1,12 @@
+{
+  "$id": "core.comment.updated",
+  "type": "object",
+  "required": ["commentId", "postId", "body", "editedAt"],
+  "properties": {
+    "commentId": { "type": "string" },
+    "postId":    { "type": "string" },
+    "body":      { "type": "string" },
+    "editedAt":  { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

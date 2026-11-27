@@ -1620,6 +1620,76 @@ describe('Event Schemas and parseEvent', () => {
     });
   });
 
+  describe('core.* V4-2 advanced comment, mention, and hashtag events', () => {
+    const at = '2026-11-27T12:00:00.000Z';
+
+    it('validates core.comment.updated, core.comment.pinned, core.comment.unpinned, core.user.mentioned, core.hashtag.created', () => {
+      expect(
+        parseEvent({
+          type: 'core.comment.updated',
+          payload: { commentId: 'c1', postId: 'p1', body: 'Edited body', editedAt: at },
+        }).type
+      ).toBe('core.comment.updated');
+
+      expect(
+        parseEvent({
+          type: 'core.comment.pinned',
+          payload: { commentId: 'c1', postId: 'p1', by: 'u1', at },
+        }).type
+      ).toBe('core.comment.pinned');
+
+      expect(
+        parseEvent({
+          type: 'core.comment.unpinned',
+          payload: { commentId: 'c1', postId: 'p1', by: 'u1', at },
+        }).type
+      ).toBe('core.comment.unpinned');
+
+      expect(
+        parseEvent({
+          type: 'core.user.mentioned',
+          payload: {
+            userId: 'u2',
+            byUserId: 'u1',
+            contentType: 'comment',
+            contentId: 'c1',
+            context: 'Hey @bob',
+            at,
+          },
+        }).type
+      ).toBe('core.user.mentioned');
+
+      expect(
+        parseEvent({
+          type: 'core.hashtag.created',
+          payload: { tag: 'nebron', postId: 'p1', at },
+        }).type
+      ).toBe('core.hashtag.created');
+    });
+
+    it('rejects invalid contentType or extra properties on V4-2 events', () => {
+      expect(() =>
+        parseEvent({
+          type: 'core.user.mentioned',
+          payload: {
+            userId: 'u2',
+            byUserId: 'u1',
+            contentType: 'invalid_type',
+            contentId: 'c1',
+            context: 'Hi',
+            at,
+          },
+        })
+      ).toThrow();
+      expect(() =>
+        parseEvent({
+          type: 'core.hashtag.created',
+          payload: { tag: 'nebron', postId: 'p1', at, extra: 1 },
+        })
+      ).toThrow();
+    });
+  });
+
   describe('unknown and invalid events', () => {
     it('throws on unknown.event', () => {
       expect(() =>

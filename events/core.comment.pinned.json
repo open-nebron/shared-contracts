@@ -1,0 +1,12 @@
+{
+  "$id": "core.comment.pinned",
+  "type": "object",
+  "required": ["commentId", "postId", "by", "at"],
+  "properties": {
+    "commentId": { "type": "string" },
+    "postId":    { "type": "string" },
+    "by":        { "type": "string" },
+    "at":        { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
