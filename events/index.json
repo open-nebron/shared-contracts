@@ -48,6 +48,7 @@
   "core.user.mentioned":          "./core.user.mentioned.json",
   "core.hashtag.created":         "./core.hashtag.created.json",
   "core.post.edited":             "./core.post.edited.json",
+  "core.post.updated":            "./core.post.updated.json",
   "core.report.created":          "./core.report.created.json",
   "core.report.resolved":         "./core.report.resolved.json",
   "core.user.banned":             "./core.user.banned.json",

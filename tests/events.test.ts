@@ -1742,6 +1742,13 @@ describe('Event Schemas and parseEvent', () => {
           payload: { contentType: 'post', contentId: 'p1', byUserId: 'u1', at },
         }).type
       ).toBe('core.content.shared');
+
+      expect(
+        parseEvent({
+          type: 'core.post.updated',
+          payload: { postId: 'p1', body: 'Updated #news', hashtags: ['news'], editedAt: at },
+        }).type
+      ).toBe('core.post.updated');
     });
 
     it('rejects invalid contentType or extra properties on V4-3 events', () => {

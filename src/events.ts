@@ -391,6 +391,16 @@ export const CorePostEditedSchema = z
   .strict();
 export type CorePostEdited = z.infer<typeof CorePostEditedSchema>;
 
+export const CorePostUpdatedSchema = z
+  .object({
+    postId: z.string(),
+    body: z.string(),
+    hashtags: z.array(z.string()),
+    editedAt: z.string().datetime(),
+  })
+  .strict();
+export type CorePostUpdated = z.infer<typeof CorePostUpdatedSchema>;
+
 export const CoreReportCreatedSchema = z
   .object({
     reportId: z.string(),
@@ -908,6 +918,11 @@ export const CorePostEditedEventSchema = z.object({
   payload: CorePostEditedSchema,
 });
 
+export const CorePostUpdatedEventSchema = z.object({
+  type: z.literal('core.post.updated'),
+  payload: CorePostUpdatedSchema,
+});
+
 export const CoreReportCreatedEventSchema = z.object({
   type: z.literal('core.report.created'),
   payload: CoreReportCreatedSchema,
@@ -1253,6 +1268,7 @@ export const EventSchema = z.discriminatedUnion('type', [
   CoreCommentUnsavedEventSchema,
   CoreContentSharedEventSchema,
   CorePostEditedEventSchema,
+  CorePostUpdatedEventSchema,
   CoreReportCreatedEventSchema,
   CoreReportResolvedEventSchema,
   CoreUserBannedEventSchema,
@@ -1336,6 +1352,7 @@ export type NebronEvent =
   | { type: 'core.comment.unsaved'; payload: CoreCommentUnsaved }
   | { type: 'core.content.shared'; payload: CoreContentShared }
   | { type: 'core.post.edited'; payload: CorePostEdited }
+  | { type: 'core.post.updated'; payload: CorePostUpdated }
   | { type: 'core.report.created'; payload: CoreReportCreated }
   | { type: 'core.report.resolved'; payload: CoreReportResolved }
   | { type: 'core.user.banned'; payload: CoreUserBanned }

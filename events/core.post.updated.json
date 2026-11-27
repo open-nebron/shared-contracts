@@ -1,0 +1,12 @@
+{
+  "$id": "core.post.updated",
+  "type": "object",
+  "required": ["postId", "body", "hashtags", "editedAt"],
+  "properties": {
+    "postId":   { "type": "string" },
+    "body":     { "type": "string" },
+    "hashtags": { "type": "array", "items": { "type": "string" } },
+    "editedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
