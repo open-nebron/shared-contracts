@@ -295,6 +295,28 @@ export const CoreCommentUnpinnedSchema = z
   .strict();
 export type CoreCommentUnpinned = z.infer<typeof CoreCommentUnpinnedSchema>;
 
+export const CoreCommentReactionAddedSchema = z
+  .object({
+    commentId: z.string(),
+    postId: z.string(),
+    emoji: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentReactionAdded = z.infer<typeof CoreCommentReactionAddedSchema>;
+
+export const CoreCommentReactionRemovedSchema = z
+  .object({
+    commentId: z.string(),
+    postId: z.string(),
+    emoji: z.string(),
+    userId: z.string(),
+    at: z.string().datetime(),
+  })
+  .strict();
+export type CoreCommentReactionRemoved = z.infer<typeof CoreCommentReactionRemovedSchema>;
+
 export const CoreUserMentionedSchema = z
   .object({
     userId: z.string(),
@@ -868,6 +890,16 @@ export const CoreCommentUnpinnedEventSchema = z.object({
   payload: CoreCommentUnpinnedSchema,
 });
 
+export const CoreCommentReactionAddedEventSchema = z.object({
+  type: z.literal('core.comment.reaction.added'),
+  payload: CoreCommentReactionAddedSchema,
+});
+
+export const CoreCommentReactionRemovedEventSchema = z.object({
+  type: z.literal('core.comment.reaction.removed'),
+  payload: CoreCommentReactionRemovedSchema,
+});
+
 export const CoreUserMentionedEventSchema = z.object({
   type: z.literal('core.user.mentioned'),
   payload: CoreUserMentionedSchema,
@@ -1258,6 +1290,8 @@ export const EventSchema = z.discriminatedUnion('type', [
   CoreCommentUpdatedEventSchema,
   CoreCommentPinnedEventSchema,
   CoreCommentUnpinnedEventSchema,
+  CoreCommentReactionAddedEventSchema,
+  CoreCommentReactionRemovedEventSchema,
   CoreUserMentionedEventSchema,
   CoreHashtagCreatedEventSchema,
   CorePostSavedEventSchema,
@@ -1342,6 +1376,8 @@ export type NebronEvent =
   | { type: 'core.comment.updated'; payload: CoreCommentUpdated }
   | { type: 'core.comment.pinned'; payload: CoreCommentPinned }
   | { type: 'core.comment.unpinned'; payload: CoreCommentUnpinned }
+  | { type: 'core.comment.reaction.added'; payload: CoreCommentReactionAdded }
+  | { type: 'core.comment.reaction.removed'; payload: CoreCommentReactionRemoved }
   | { type: 'core.user.mentioned'; payload: CoreUserMentioned }
   | { type: 'core.hashtag.created'; payload: CoreHashtagCreated }
   | { type: 'core.post.saved'; payload: CorePostSaved }

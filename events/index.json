@@ -45,6 +45,8 @@
   "core.comment.updated":         "./core.comment.updated.json",
   "core.comment.pinned":          "./core.comment.pinned.json",
   "core.comment.unpinned":        "./core.comment.unpinned.json",
+  "core.comment.reaction.added":   "./core.comment.reaction.added.json",
+  "core.comment.reaction.removed": "./core.comment.reaction.removed.json",
   "core.user.mentioned":          "./core.user.mentioned.json",
   "core.hashtag.created":         "./core.hashtag.created.json",
   "core.post.edited":             "./core.post.edited.json",

@@ -1749,6 +1749,20 @@ describe('Event Schemas and parseEvent', () => {
           payload: { postId: 'p1', body: 'Updated #news', hashtags: ['news'], editedAt: at },
         }).type
       ).toBe('core.post.updated');
+
+      expect(
+        parseEvent({
+          type: 'core.comment.reaction.added',
+          payload: { commentId: 'c1', postId: 'p1', emoji: 'heart', userId: 'u1', at },
+        }).type
+      ).toBe('core.comment.reaction.added');
+
+      expect(
+        parseEvent({
+          type: 'core.comment.reaction.removed',
+          payload: { commentId: 'c1', postId: 'p1', emoji: 'heart', userId: 'u1', at },
+        }).type
+      ).toBe('core.comment.reaction.removed');
     });
 
     it('rejects invalid contentType or extra properties on V4-3 events', () => {

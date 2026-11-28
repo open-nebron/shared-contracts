@@ -1,0 +1,13 @@
+{
+  "$id": "core.comment.reaction.removed",
+  "type": "object",
+  "required": ["commentId", "postId", "emoji", "userId", "at"],
+  "properties": {
+    "commentId": { "type": "string" },
+    "postId":    { "type": "string" },
+    "emoji":     { "type": "string" },
+    "userId":    { "type": "string" },
+    "at":        { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
